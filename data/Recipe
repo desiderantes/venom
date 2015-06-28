@@ -1,0 +1,4 @@
+data.desktop {
+    xdg-desktop-files = venom.desktop
+    gettext-domain = venom
+}

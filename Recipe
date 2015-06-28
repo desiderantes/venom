@@ -1,0 +1,17 @@
+project {
+	name = Venom 
+	major = 0
+	minor = 3
+	patch = 0
+	version = $(project.major).$(project.minor).$(project.patch)
+	minimum-bake-version = 0.1.33
+}
+
+data.meta { 
+	files = README \
+			INSTALL \
+			AUTHORS \
+			NEWS \
+
+	install = false 
+}

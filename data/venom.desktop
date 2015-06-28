@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Venom
+GenericName=Tox
+Comment=A GTK+/Vala GUI for Tox
+TryExec=venom
+Exec=venom %u
+Icon=venom
+Categories=InstantMessaging;Network;AudioVideo;GTK;
+Terminal=false
+X-GNOME-Gettext-Domain=venom
+MimeType=x-scheme-handler/tox;
