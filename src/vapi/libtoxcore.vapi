@@ -1,7 +1,7 @@
 /* -*- Mode: vala; tab-width: 4; intend-tabs-mode: t -*- */
 /* libtoxcore.vapi
  * This file is part of Venom
- * Copyright (C) 2015 Venom authors
+ * Copyright (C) 2015 Venom authors and contributors
  * Venom is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
@@ -672,17 +672,17 @@ private enum TOX_ERR_FILE_GET {
 
 }
 
-typedef enum TOX_ERR_FILE_SEND {
+private enum TOX_ERR_FILE_SEND {
 
 /**
  * The function returned successfully.
  */
-TOX_ERR_FILE_SEND_OK,
+OK,
 
 /**
  * One of the arguments to the function was NULL when it was not expected.
  */
-TOX_ERR_FILE_SEND_NULL,
+NULL,
 
 /**
  * The friend_number passed did not designate a valid friend.
@@ -707,6 +707,57 @@ TOO_MANY,
 
 }
 
+private enum TOX_ERR_FILE_SEND_CHUNK {
+
+/**
+ * The function returned successfully.
+ */
+OK,
+
+/**
+ * The length parameter was non-zero, but data was NULL.
+ */
+NULL,
+
+/**
+ * The friend_number passed did not designate a valid friend.
+ */
+FRIEND_NOT_FOUND,
+
+/**
+ * This client is currently not connected to the friend.
+ */
+FRIEND_NOT_CONNECTED,
+
+/**
+ * No file transfer with the given file number was found for the given friend.
+ */
+NOT_FOUND,
+
+/**
+ * File transfer was found but isn't in a transferring state: (paused, done,
+ * broken, etc...) (happens only when not called from the request chunk callback).
+ */
+NOT_TRANSFERRING,
+
+/**
+ * Attempted to send more or less data than requested. The requested data size is
+ * adjusted according to maximum transmission unit and the expected end of
+ * the file. Trying to send less or more than requested will return this error.
+ */
+INVALID_LENGTH,
+
+/**
+ * Packet queue is full.
+ */
+SENDQ,
+
+/**
+		 * Position parameter was wrong.
+		 */
+WRONG_POSITION,
+		
+}
 
 /*******************************************************************************
  *
@@ -930,7 +981,22 @@ TOO_MANY,
     	NOT_FOUND,
 	
 	}
-
+	
+	public errordomain FileSendError{
+		FRIEND_NOT_FOUND,
+		FRIEND_NOT_CONNECTED,
+		TOO_MANY,
+	}
+	
+	public errordomain FileSendChunkError{
+		FRIEND_NOT_FOUND,
+		FRIEND_NOT_CONNECTED,
+		NOT_FOUND,
+		NOT_TRANSFERRING,
+		INVALID_LENGTH,
+		SENDQ,
+		WRONG_POSITION,
+	}
   
 
 	[CCode (cname = "Tox_Options",  destroy_function = "tox_options_free", has_type_id = false)]
@@ -1591,7 +1657,7 @@ TOO_MANY,
 		 *
 		 * @return true on success.
 		 */
-		private bool friend_get_name(const Tox *tox, uint32 friend_number, [CCode (array_length = false)]uint8[] name,out TOX_ERR_FRIEND_BY_PUBLIC_KEY error);
+		private bool friend_get_name(uint32 friend_number, [CCode (array_length = false)]uint8[] name,out TOX_ERR_FRIEND_BY_PUBLIC_KEY error);
 		
 		public string get_friend_name(uint32 friend_number) throws FriendGetError{
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
@@ -2156,183 +2222,152 @@ TOO_MANY,
 		 *   number is per friend. File numbers are reused after a transfer terminates.
 		 *   On failure, this function returns UINT32_MAX. Any pattern in file numbers
 		 *   should not be relied on.
- */
-		private uint32 file_send(uint32 friend_number, FileKind kind, uint64 file_size, [CCode (array_length=false]const uint8[]? file_id,
-   const uint8[] filename_missing_null, out TOX_ERR_FILE_SEND error);
-		public uint32 send_file(uint32 friend_number, FileKind kind, uint64 file_size, uint8? file_id[FILE_ID_LENGTH], string filename) requires (filename.length <= throws FileSendError{
+		 */
+		private uint32 file_send(uint32 friend_number, FileKind kind, uint64 file_size, [CCode (array_length=false)]const uint8[]? file_id, const uint8[] filename_missing_null, out TOX_ERR_FILE_SEND error);
+		public uint32 send_file(uint32 friend_number, FileKind kind, uint64 file_size, uint8? file_id[FILE_ID_LENGTH], string filename) 
+								requires (filename.length <= MAX_FILENAME_LENGTH) throws FileSendError{
 			TOX_ERR_FILE_SEND err;
-			uint32 res= file_send(friend_number, kind, file_size, file_id, filename.data,err);
+			uint32 res = file_send(friend_number, kind, file_size, file_id, filename.data,err);
+			if(res==uint32.MAX){
+				switch (err){
+					case TOX_ERR_FILE_SEND.FRIEND_NOT_FOUND:
+						throw new FileSendError.FRIEND_NOT_FOUND("Friend number" + friend_number + " not found");
+						break;
+					case TOX_ERR_FILE_SEND.FRIEND_NOT_CONNECTED:
+						throw new FileSendError.FRIEND_NOT_CONNECTED("Friend number "+friend_number+" is not online");
+						break;
+					case TOX_ERR_FILE_SEND.TOO_MANY:
+						throw new FileSendError.TOO_MANY("Too many outgoing connections for friend number " + friend_number);
+						break;
+					default:
+						break;
+				}
+			}
+			return res;
 		}
-typedef enum TOX_ERR_FILE_SEND_CHUNK {
-
-/**
- * The function returned successfully.
- */
-TOX_ERR_FILE_SEND_CHUNK_OK,
-
-/**
- * The length parameter was non-zero, but data was NULL.
- */
-TOX_ERR_FILE_SEND_CHUNK_NULL,
-
-/**
- * The friend_number passed did not designate a valid friend.
- */
-TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_FOUND,
-
-/**
- * This client is currently not connected to the friend.
- */
-TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_CONNECTED,
-
-/**
- * No file transfer with the given file number was found for the given friend.
- */
-TOX_ERR_FILE_SEND_CHUNK_NOT_FOUND,
-
-/**
- * File transfer was found but isn't in a transferring state: (paused, done,
- * broken, etc...) (happens only when not called from the request chunk callback).
- */
-TOX_ERR_FILE_SEND_CHUNK_NOT_TRANSFERRING,
-
-/**
- * Attempted to send more or less data than requested. The requested data size is
- * adjusted according to maximum transmission unit and the expected end of
- * the file. Trying to send less or more than requested will return this error.
- */
-TOX_ERR_FILE_SEND_CHUNK_INVALID_LENGTH,
-
-/**
- * Packet queue is full.
- */
-TOX_ERR_FILE_SEND_CHUNK_SENDQ,
-
-/**
- * Position parameter was wrong.
- */
-TOX_ERR_FILE_SEND_CHUNK_WRONG_POSITION,
-
-} TOX_ERR_FILE_SEND_CHUNK;
-
-
-/**
- * Send a chunk of file data to a friend.
- *
- * This function is called in response to the `file_chunk_request` callback. The
- * length parameter should be equal to the one received though the callback.
- * If it is zero, the transfer is assumed complete. For files with known size,
- * Core will know that the transfer is complete after the last byte has been
- * received, so it is not necessary (though not harmful) to send a zero-length
- * chunk to terminate. For streams, core will know that the transfer is finished
- * if a chunk with length less than the length requested in the callback is sent.
- *
- * @param friend_number The friend number of the receiving friend for this file.
- * @param file_number The file transfer identifier returned by tox_file_send.
- * @param position The file or stream position from which to continue reading.
- * @return true on success.
- */
-bool tox_file_send_chunk(Tox *tox, uint32_t friend_number, uint32_t file_number, uint64_t position, const uint8_t *data,
- size_t length, TOX_ERR_FILE_SEND_CHUNK *error);
-
-/**
- * If the length parameter is 0, the file transfer is finished, and the client's
- * resources associated with the file number should be released. After a call
- * with zero length, the file number can be reused for future file transfers.
- *
- * If the requested position is not equal to the client's idea of the current
- * file or stream position, it will need to seek. In case of read-once streams,
- * the client should keep the last read chunk so that a seek back can be
- * supported. A seek-back only ever needs to read from the last requested chunk.
- * This happens when a chunk was requested, but the send failed. A seek-back
- * request can occur an arbitrary number of times for any given chunk.
- *
- * In response to receiving this callback, the client should call the function
- * `tox_file_send_chunk` with the requested chunk. If the number of bytes sent
- * through that function is zero, the file transfer is assumed complete. A
- * client must send the full length of data requested with this callback.
- *
- * @param friend_number The friend number of the receiving friend for this file.
- * @param file_number The file transfer identifier returned by tox_file_send.
- * @param position The file or stream position from which to continue reading.
- * @param length The number of bytes requested for the current chunk.
- */
-typedef void tox_file_chunk_request_cb(Tox *tox, uint32_t friend_number, uint32_t file_number, uint64_t position,
-   size_t length, void *user_data);
+		
+		
+		/**
+		 * Send a chunk of file data to a friend.
+		 *
+		 * This function is called in response to the `file_chunk_request` callback. The
+		 * length parameter should be equal to the one received though the callback.
+		 * If it is zero, the transfer is assumed complete. For files with known size,
+		 * Core will know that the transfer is complete after the last byte has been
+		 * received, so it is not necessary (though not harmful) to send a zero-length
+		 * chunk to terminate. For streams, core will know that the transfer is finished
+		 * if a chunk with length less than the length requested in the callback is sent.
+		 *
+		 * @param friend_number The friend number of the receiving friend for this file.
+		 * @param file_number The file transfer identifier returned by tox_file_send.
+		 * @param position The file or stream position from which to continue reading.
+		 * @return true on success.
+		 */
+		bool tox_file_send_chunk(Tox *tox, uint32_t friend_number, uint32_t file_number, uint64_t position, const uint8_t *data,
+		 size_t length, TOX_ERR_FILE_SEND_CHUNK *error);
+		
+		/**
+		 * If the length parameter is 0, the file transfer is finished, and the client's
+		 * resources associated with the file number should be released. After a call
+		 * with zero length, the file number can be reused for future file transfers.
+		 *
+		 * If the requested position is not equal to the client's idea of the current
+		 * file or stream position, it will need to seek. In case of read-once streams,
+		 * the client should keep the last read chunk so that a seek back can be
+		 * supported. A seek-back only ever needs to read from the last requested chunk.
+		 * This happens when a chunk was requested, but the send failed. A seek-back
+		 * request can occur an arbitrary number of times for any given chunk.
+		 *
+		 * In response to receiving this callback, the client should call the function
+		 * `tox_file_send_chunk` with the requested chunk. If the number of bytes sent
+		 * through that function is zero, the file transfer is assumed complete. A
+		 * client must send the full length of data requested with this callback.
+		 *
+		 * @param friend_number The friend number of the receiving friend for this file.
+		 * @param file_number The file transfer identifier returned by tox_file_send.
+		 * @param position The file or stream position from which to continue reading.
+		 * @param length The number of bytes requested for the current chunk.
+		 */
+		[CCode (cname="tox_file_chunk_request_cb")]
+		public delegate void ChunkRequestFunc(Tox tox, uint32 friend_number, uint32 file_number, uint64 position, size_t length);
+		
+		
+		/**
+		 * Set the callback for the `file_chunk_request` event. Pass NULL to unset.
+		 *
+		 * This event is triggered when Core is ready to send more file data.
+		 */
+		[CCode (cname="tox_callback_file_chunk_request")]
+		public void chunk_request_callback(ChunkrequestFunc callback);
 
 
-/**
- * Set the callback for the `file_chunk_request` event. Pass NULL to unset.
- *
- * This event is triggered when Core is ready to send more file data.
- */
-void tox_callback_file_chunk_request(Tox *tox, tox_file_chunk_request_cb *callback, void *user_data);
+		/*******************************************************************************
+		 *
+		 * :: File transmission: receiving
+		 *
+		 ******************************************************************************/
 
 
-/*******************************************************************************
- *
- * :: File transmission: receiving
- *
- ******************************************************************************/
-
-
-
-/**
- * The client should acquire resources to be associated with the file transfer.
- * Incoming file transfers start in the PAUSED state. After this callback
- * returns, a transfer can be rejected by sending a TOX_FILE_CONTROL_CANCEL
- * control command before any other control commands. It can be accepted by
- * sending TOX_FILE_CONTROL_RESUME.
- *
- * @param friend_number The friend number of the friend who is sending the file
- *   transfer request.
- * @param file_number The friend-specific file number the data received is
- *   associated with.
- * @param kind The meaning of the file to be sent.
- * @param file_size Size in bytes of the file the client wants to send,
- *   UINT64_MAX if unknown or streaming.
- * @param filename Name of the file. Does not need to be the actual name. This
- *   name will be sent along with the file send request.
- * @param filename_length Size in bytes of the filename.
- */
-typedef void tox_file_recv_cb(Tox *tox, uint32_t friend_number, uint32_t file_number, uint32_t kind, uint64_t file_size,
-  const uint8_t *filename, size_t filename_length, void *user_data);
-
-
-/**
- * Set the callback for the `file_recv` event. Pass NULL to unset.
- *
- * This event is triggered when a file transfer request is received.
- */
-void tox_callback_file_recv(Tox *tox, tox_file_recv_cb *callback, void *user_data);
-
-/**
- * When length is 0, the transfer is finished and the client should release the
- * resources it acquired for the transfer. After a call with length = 0, the
- * file number can be reused for new file transfers.
- *
- * If position is equal to file_size (received in the file_receive callback)
- * when the transfer finishes, the file was received completely. Otherwise, if
- * file_size was UINT64_MAX, streaming ended successfully when length is 0.
- *
- * @param friend_number The friend number of the friend who is sending the file.
- * @param file_number The friend-specific file number the data received is
- *   associated with.
- * @param position The file position of the first byte in data.
- * @param data A byte array containing the received chunk.
- * @param length The length of the received chunk.
- */
-typedef void tox_file_recv_chunk_cb(Tox *tox, uint32_t friend_number, uint32_t file_number, uint64_t position,
-const uint8_t *data, size_t length, void *user_data);
-
-
-/**
- * Set the callback for the `file_recv_chunk` event. Pass NULL to unset.
- *
- * This event is first triggered when a file transfer request is received, and
- * subsequently when a chunk of file data for an accepted request was received.
- */
-void tox_callback_file_recv_chunk(Tox *tox, tox_file_recv_chunk_cb *callback, void *user_data);
+		
+		/**
+		 * The client should acquire resources to be associated with the file transfer.
+		 * Incoming file transfers start in the PAUSED state. After this callback
+		 * returns, a transfer can be rejected by sending a TOX_FILE_CONTROL_CANCEL
+		 * control command before any other control commands. It can be accepted by
+		 * sending TOX_FILE_CONTROL_RESUME.
+		 *
+		 * @param friend_number The friend number of the friend who is sending the file
+		 *   transfer request.
+		 * @param file_number The friend-specific file number the data received is
+		 *   associated with.
+		 * @param kind The meaning of the file to be sent.
+		 * @param file_size Size in bytes of the file the client wants to send,
+		 *   UINT64_MAX if unknown or streaming.
+		 * @param filename Name of the file. Does not need to be the actual name. This
+		 *   name will be sent along with the file send request.
+		 * @param filename_length Size in bytes of the filename.
+		 */
+		[CCode (cname="tox_file_recv_cb")]
+		public delegate void FileReceiveFunc(Tox tox, uint32 friend_number, uint32 file_number, FileKind kind, uint64 file_size,
+		  const uint8[] filename_missing_null);
+		
+		
+		/**
+		 * Set the callback for the `file_recv` event. Pass NULL to unset.
+		 *
+		 * This event is triggered when a file transfer request is received.
+		 */
+		[CCode (cname="tox_callback_file_recv")]
+		public void file_receive_callback(FileReceiveFunc callback);
+		
+		/**
+		 * When length is 0, the transfer is finished and the client should release the
+		 * resources it acquired for the transfer. After a call with length = 0, the
+		 * file number can be reused for new file transfers.
+		 *
+		 * If position is equal to file_size (received in the file_receive callback)
+		 * when the transfer finishes, the file was received completely. Otherwise, if
+		 * file_size was UINT64_MAX, streaming ended successfully when length is 0.
+		 *
+		 * @param friend_number The friend number of the friend who is sending the file.
+		 * @param file_number The friend-specific file number the data received is
+		 *   associated with.
+		 * @param position The file position of the first byte in data.
+		 * @param data A byte array containing the received chunk.
+		 * @param length The length of the received chunk.
+		 */
+		[CCode(cname="tox_file_recv_chunk_cb"]
+		public delegate void ReceiveChunkFunc(Tox tox, uint32 friend_number, uint32 file_number, uint64 position, const uint8[] data);
+		
+		
+		/**
+		 * Set the callback for the `file_recv_chunk` event. Pass NULL to unset.
+		 *
+		 * This event is first triggered when a file transfer request is received, and
+		 * subsequently when a chunk of file data for an accepted request was received.
+		 */
+		[CCode(cname="tox_callback_file_recv_chunk")]
+		public void receive_chunk_callback(ReceiveChunkFunc callback);
 
 
 /*******************************************************************************
@@ -2500,7 +2535,12 @@ void tox_callback_friend_lossless_packet(Tox *tox, tox_friend_lossless_packet_cb
  * @param dht_id A memory region of at least TOX_PUBLIC_KEY_SIZE bytes. If this
  *   parameter is NULL, this function has no effect.
  */
-void tox_self_get_dht_id(const Tox *tox, uint8_t *dht_id);
+private void self_get_dht_id([CCode (array_length = false)]uint8[] dht_id);
+public uint8[] get_dht_id(){
+	uint8 retval[PUBLIC_KEY_SIZE];
+	self_get_dht_id(retval);
+	return retval;
+}
 
 typedef enum TOX_ERR_GET_PORT {
 
@@ -2530,33 +2570,5 @@ uint16_t tox_self_get_tcp_port(const Tox *tox, TOX_ERR_GET_PORT *error);
 
 	
 	
-	
-/****************FILE SENDING FUNCTIONS*****************/
-/* NOTE: This how to will be updated.
- *
- * HOW TO SEND FILES CORRECTLY:
- * 1. Use tox_new_file_sender(...) to create a new file sender.
- * 2. Wait for the callback set with tox_callback_file_control(...) to be called with receive_send == 1 and control_type == TOX_FILECONTROL_ACCEPT
- * 3. Send the data with tox_file_send_data(...) with chunk size tox_file_data_size(...)
- * 4. When sending is done, send a tox_file_send_control(...) with send_receive = 0 and message_id = TOX_FILECONTROL_FINISHED
- *
- * HOW TO RECEIVE FILES CORRECTLY:
- * 1. wait for the callback set with tox_callback_file_send_request(...)
- * 2. accept or refuse the connection with tox_file_send_control(...) with send_receive = 1 and message_id = TOX_FILECONTROL_ACCEPT or TOX_FILECONTROL_KILL
- * 3. save all the data received with the callback set with tox_callback_file_data(...) to a file.
- * 4. when the callback set with tox_callback_file_control(...) is called with receive_send == 0 and control_type == TOX_FILECONTROL_FINISHED
- * the file is done transferring.
- *
- * tox_file_data_remaining(...) can be used to know how many bytes are left to send/receive.
- *
- * If the connection breaks during file sending (The other person goes offline without pausing the sending and then comes back)
- * the reciever must send a control packet with receive_send == 0 message_id = TOX_FILECONTROL_RESUME_BROKEN and the data being
- * a uint64_t (in host byte order) containing the number of bytes recieved.
- *
- * If the sender receives this packet, he must send a control packet with receive_send == 1 and control_type == TOX_FILECONTROL_ACCEPT
- * then he must start sending file data from the position (data , uint64_t in host byte order) recieved in the TOX_FILECONTROL_RESUME_BROKEN packet.
- *
- * More to come...
- */
 	}
 }

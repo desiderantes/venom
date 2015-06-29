@@ -1,0 +1,18 @@
+templates.venom{
+
+    files = config.vala \
+            
+    variables = @DATADIR@=$(options.data-directory) \
+                @PACKAGE_DATA_DIR@=$(options.project-data-directory) \
+                @GETTEXT_PACKAGE@=venom \
+                @RELEASE_NAME@=Venom \
+                @VERSION@=$(project.version) \
+                @EXEC_NAME@=venom \
+                @COPYRIGHT_YEARS@=2015 \
+                @MAIN_URL@=https://github.com/desiderantes/venom \
+                @BUG_URL@=https://github.com/desiderantes/venom/issues\
+                @HELP_URL@=https://github.com/desiderantes/venom/issues \
+                @TRANSLATE_URL@=https://github.com/desiderantes/venom \ 
+
+}
+

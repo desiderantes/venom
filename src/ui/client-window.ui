@@ -26,6 +26,10 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
   <!-- interface-name Venom -->
   <!-- interface-description A graphical client for Tox -->
   <!-- interface-copyright Venom authors and contributors -->
+  <object class="GtkAction" id="add_action"/>
+  <object class="GtkAction" id="filetranster_action"/>
+  <object class="GtkAction" id="groupchat_action"/>
+  <object class="GtkAction" id="preferences_action"/>
   <template class="VenomClientWindow" parent="GtkApplicationWindow">
     <property name="width_request">320</property>
     <property name="height_request">420</property>
@@ -41,6 +45,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
             <property name="width_request">58</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="row_spacing">10</property>
             <child>
               <object class="GtkButtonBox" id="buttonbox">
                 <property name="visible">True</property>
@@ -51,9 +56,11 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="layout_style">start</property>
                 <child>
                   <object class="GtkButton" id="add_button">
+                    <property name="related_action">add_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">add_action</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
@@ -65,9 +72,11 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                 </child>
                 <child>
                   <object class="GtkButton" id="groupchat_button">
+                    <property name="related_action">groupchat_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">groupchat_action</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
@@ -79,9 +88,11 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                 </child>
                 <child>
                   <object class="GtkButton" id="filetransfer_button">
+                    <property name="related_action">filetranster_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">filetransfer_action</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
@@ -93,9 +104,11 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                 </child>
                 <child>
                   <object class="GtkButton" id="preferences_button">
+                    <property name="related_action">preferences_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="action_name">preferences_action</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
@@ -125,7 +138,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
               <object class="GtkBox" id="connection_box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="spacing">3</property>
+                <property name="spacing">10</property>
                 <child>
                   <object class="GtkImage" id="avatar_image">
                     <property name="width_request">48</property>
@@ -147,7 +160,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
-                    <property name="spacing">2</property>
+                    <property name="spacing">10</property>
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkLabel" id="username_label">
@@ -169,7 +182,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="change_userstatus" swapped="no"/>
+                        <property name="relief">none</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -189,6 +202,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
+                    <property name="spacing">10</property>
                     <child>
                       <object class="GtkComboBox" id="status_combobox">
                         <property name="visible">True</property>
@@ -228,7 +242,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
               <object class="GtkBox" id="filter_box">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="spacing">11</property>
+                <property name="spacing">10</property>
                 <child>
                   <object class="GtkComboBoxText" id="statusfilter_combobox">
                     <property name="visible">True</property>

@@ -19,32 +19,44 @@
 
 namespace Venom{
 	public class Options : Object{
-		public static string? datafile = null;
-		public static bool offline = false;
-		public static bool version = false;
-		public static bool no_single = false;
-		public const OptionEntry[] option_entries = {
-	    	{ "file", 'f', 0, OptionArg.FILENAME, ref datafile, 
-				_("Set the location of the tox data file"), "<file>" },
-			{ "offline" , 0  , 0, OptionArg.NONE, ref offline, 
-				_("Start in offline mode"), null },
-			{ "version" , 0, 0, OptionArg.NONE, ref version, 
-				_("Display version number"), null },
-			{ "no-single" , 0, 0, OptionArg.NONE, ref no_single, 
-				_("Start as another instance even if there is a current instance running"), null },
-			{ null }
-		};
+		public string? datafile;
+		public bool offline;
+		public bool version;
+		public bool no_single;
+		public OptionContext opt_context;
+		public OptionEntry entries[5];
 		public Options(){
+			datafile=null;
+			offline=false;
+			version=false;
+			no_single=false;
+			entries[0] = { "file", 'f', 0, OptionArg.FILENAME, ref datafile, 
+							_("Run using an specific tox data file"), "<file>" };
+			entries[1]=	{ "offline" , 0  , 0, OptionArg.NONE, ref offline, 
+							_("Start in offline mode"), null };
+			entries[2]=	{ "version" , 0, 0, OptionArg.NONE, ref version, 
+						_("Display version number"), null };
+			entries[3] =	{ "no-single" , 0, 0, OptionArg.NONE, ref no_single, 
+						_("Start as another instance even if there is a current instance running"), null };
+			entries[4] = {null};
+			
 			opt_context = new OptionContext ("Venom");
 			opt_context.set_help_enabled (true);
 			opt_context.add_main_entries (entries, "venom");
 			opt_context.add_group(Gtk.get_option_group(true));
-		
+		}
+		public void parse(string[] args)throws OptionError{
+			try{
+				opt_context.parse(ref args);
+			}catch(OptionError e){
+				throw e;
+			}
+		}
 	}
 	
 	
 	public class Venom : Gtk.Application{
-		
+		private ClientWindow window;
 		private Options opts;
 		public Venom () {
 			Object(
@@ -62,34 +74,29 @@ namespace Venom{
 			opts = opt;
 		}
 		protected override void startup() {
-			add_action_entries(app_entries, this);
 			base.startup();
 		}
 		protected override void activate() {
 			hold();
-			var window = get_contact_list_window();
-			window.incoming_message.connect(show_notification_for_message);
-			window.incoming_group_message.connect(show_notification_for_message);
-			window.incoming_action.connect(show_notification_for_message);
-			window.incoming_group_action.connect(show_notification_for_message);
+			if(window == null){
+				window = new ClientWindow(this);
+			}
 			window.present();
 			release();
 		}
 
 		protected override void open(GLib.File[] files, string hint) {
 			hold();
-			get_contact_list_window().present();
+			window.present();
 			//FIXME allow names without tox:// prefix on command line
-			contact_list_window.add_contact(files[0].get_uri());
 			release();
 		}    
 
 		public static int main (string[] args) {
 			GLib.Intl.textdomain(Config.GETTEXT_PACKAGE);
-			GLib.Intl.bindtextdomain(Config.GETTEXT_PACKAGE, Config.PACKAGE_LOCALE_DIR);
 			Environment.set_application_name(Config.GETTEXT_PACKAGE);
 			Gtk.init(ref args);
-			Gst.init(ref args);
+			//Gst.init(ref args);
 			Options opts = new Options();
 			try {
 				opts.parse (args);
@@ -97,7 +104,7 @@ namespace Venom{
 				stdout.printf ("error: %s\n", e.message);
 				stdout.printf (
 				               _("Run '%s --help' to see a full list of available command line options.\n"),
-				               args[0]);
+				               Config.EXEC_NAME);
 				return 0;
 			}
 

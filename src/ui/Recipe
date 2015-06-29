@@ -1,12 +1,7 @@
-programs.venom{
-	
-	glib-resources = venom.gresource.xml
-	
-}
 data.venom{
 	gtk-ui-files = 	about-window.ui \
 					client-window.ui \
 					conversation-widget.ui \
 					profile-box.ui \
-					
+	gettext-domain = venom			
 }

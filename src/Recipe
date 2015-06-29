@@ -1,7 +1,8 @@
-}
 programs.venom {
 
 	sources =	venom.vala \
+				core/config.vala \
+				ui/client-window.vala\
 
 	packages =	gthread-2.0 \
 				glib-2.0 >= 2.38.0 \
@@ -14,11 +15,12 @@ programs.venom {
 					gio-2.0 \
 					gtk+-3.0 \
 
-	
 	gettext-domain = venom
+	
+	glib-resources= ui/venom.gresource.xml
 
 	compile-flags = -DGETTEXT_PACKAGE=\"venom\" 
 
-	vala-compile-flags = --pkg gio-2.0 --target-glib=2.38 --thread --enable-checking --debug --enable-experimental --verbose --fatal-warnings
+	vala-compile-flags = --pkg gio-2.0 --target-glib=2.38 --thread --enable-checking --debug --enable-experimental --verbose --gresources
 	
 }

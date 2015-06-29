@@ -18,7 +18,7 @@
  */
 namespace Venom{
 	
-	[GtkTemplate (ui = "/im/tox/venom/client-window.ui")]
+	[GtkTemplate (ui = "/im/tox/venom/ui/client-window.ui")]
 	public class ClientWindow : Gtk.ApplicationWindow{
 	
 		private Gtk.StatusIcon tray_icon;
@@ -47,15 +47,18 @@ namespace Venom{
 		private Gtk.Button preferences_button;
 		[GtkChild]
 		private Gtk.ScrolledWindow contactstack_container;
+		[GtkChild]
+		private Gtk.Revealer conversations_revealer;
 		private Gtk.Stack conversation_stack;
 		private Gtk.StackSwitcher contact_list;
-		private Gtk.Popup userstatus_popup;
-		private Gtk.Popup add_contact_popup;
-		private Gtk.Popup preferences_popup;
+		private Gtk.Popover userstatus_popover;
+		private Gtk.Popover add_contact_popover;
+		private Gtk.Popover preferences_popover;
 		
 		public ClientWindow(Venom app){
 			this.set_application(app);
 			contactstack_container.add(contact_list);
+			conversations_revealer.add(conversation_stack);
 		}
 		
 	}
