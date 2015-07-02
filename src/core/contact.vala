@@ -1,6 +1,6 @@
 /* -*- Mode: vala; tab-width: 4; intend-tabs-mode: t -*- */
-/* tox-session.c
- * tox-session.vala
+/* contact.c
+ * ccontact.vala
  * This file is part of Venom
  * Copyright (C) 2015 Venom authors
  * Venom is free software: you can redistribute it and/or modify it
@@ -16,21 +16,29 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using ToxCore;
 using GLib;
-using Gee;
+using ToxCore;
+
 namespace Venom{
-	public class ToxSession : GLib.Object{
-	
-		private ToxCore.Tox? handle;
-		private ToxCore.Options opts;
+	public class Contact : GLib.Object{
+		public uint8 public_key[ToxCore.PUBLIC_KEY_SIZE]{get;private set;}
+		public string name{get;set;default = ""}
+		public uint32 friend_number{get;private set;}
+		public string status_message{get;set; default = ""}
+		public DateTime last_seen{get;set;}
+		public Venom.UserStatus user_status{get;set;default = }
+		
+		public Gdk.Pixbuf? avatar{get;set;}
+		public string alias{get;set;default=""}
+		public bool is_typing{get;set;default=false}
+		public bool is_silenced{get;set;default=false}
 		
 		
-		public ToxSession()
-			
+		public Contact(uint8 pubkey[ToxCore.PUBLIC_KEY_SIZE], uint32 friend_number){
+			public_key = pubkey;
+			this.friend_number = friend_number;
 		}
 		
-		public ToxSession.from_savedata()
 	}
-}
 
+}

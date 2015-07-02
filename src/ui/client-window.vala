@@ -48,17 +48,21 @@ namespace Venom{
 		[GtkChild]
 		private Gtk.ScrolledWindow contactstack_container;
 		[GtkChild]
-		private Gtk.Revealer conversations_revealer;
+		private Gtk.Revealer conversation_revealer;
 		private Gtk.Stack conversation_stack;
 		private Gtk.StackSwitcher contact_list;
 		private Gtk.Popover userstatus_popover;
 		private Gtk.Popover add_contact_popover;
 		private Gtk.Popover preferences_popover;
 		
-		public ClientWindow(Venom app){
+		public ClientWindow(VenomApp app){
 			this.set_application(app);
 			contactstack_container.add(contact_list);
-			conversations_revealer.add(conversation_stack);
+			conversation_revealer.add(conversation_stack);
+			conversation_stack = new Gtk.Stack();
+			conversation_stack.add(new ConversationWidget());
+			contact_list = new Gtk.StackSwitcher();
+			contact_list.set_stack(conversation_stack);
 		}
 		
 	}

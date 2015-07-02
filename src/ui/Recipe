@@ -3,5 +3,6 @@ data.venom{
 					client-window.ui \
 					conversation-widget.ui \
 					profile-box.ui \
-	gettext-domain = venom			
+	gettext-domain = venom
+	
 }

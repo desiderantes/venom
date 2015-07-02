@@ -1,6 +1,6 @@
 /* -*- Mode: vala; tab-width: 4; intend-tabs-mode: t -*- */
-/* tox-session.c
- * tox-session.vala
+/* conversation-widget.c
+ * conversation-widget.vala
  * This file is part of Venom
  * Copyright (C) 2015 Venom authors
  * Venom is free software: you can redistribute it and/or modify it
@@ -16,21 +16,11 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using ToxCore;
-using GLib;
-using Gee;
 namespace Venom{
-	public class ToxSession : GLib.Object{
 	
-		private ToxCore.Tox? handle;
-		private ToxCore.Options opts;
-		
-		
-		public ToxSession()
-			
-		}
-		
-		public ToxSession.from_savedata()
+	[GtkTemplate (ui = "/im/tox/venom/ui/conversation-widget.ui")]
+	public class ConversationWidget : Gtk.Box{
+	
+	
 	}
 }
-

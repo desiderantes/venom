@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+	<gresource prefix="/im/tox/venom/ui">
+		<file alias="about-window.ui" preprocess="xml-stripblanks">ui/about-window.ui</file>
+		<file alias="client-window.ui" preprocess="xml-stripblanks">ui/client-window.ui</file>
+		<file alias="conversation-widget.ui" preprocess="xml-stripblanks">ui/conversation-widget.ui</file>
+		<file alias="profile-box.ui"preprocess="xml-stripblanks">ui/profile-box.ui</file>
+	</gresource>
+</gresources>
+
