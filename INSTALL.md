@@ -18,36 +18,45 @@ Additionally to the tox build dependencies, you will need:
 
 | Package name     | Version   | Comment        |
 |------------------|-----------|----------------|
-| valac            | >=0.26.0  |                |
-| bake             | >=0.1.33  |                |
+| valac            | >=0.28.0  |                |
+| bake             | >=0.1.33  | If not available, please use a release tarball |
 | libgtk-3-dev     | >=3.12    |                |
 | libjson-glib-dev | >=0.14    |                |
 | libsqlite3-dev   | >=3.7     |                |
-
+| libsqlheavy-dev  | >=0.1.1   | Might be replaced by libgda in the future |
 
 Ubuntu >= 14.04 (Trusty Tahr) / Linux Mint / Debian:
 	
-    apt-get install valac bake libgtk-3-dev libjson-glib-dev libsqlite3-dev
+    apt-get install valac bake libgtk-3-dev libjson-glib-dev libsqlite3-dev libsqlheavy-dev
 
 Fedora: (Assuming you have the Bake build system available)
 
-    yum install vala bake gtk3-devel json-glib-devel sqlite-devel
+    yum install vala bake gtk3-devel json-glib-devel sqlite-devel sqlheavy-devel
 
 Arch Linux: (Assuming you have the Bake build system available)
 
-    pacman -S vala bake gtk3 json-glib sqlite
+    pacman -S vala bake gtk3 json-glib sqlite sqlheavy
 
 Building and installing Venom
 -----------------------------
 
-After you installed the dependencies, clone, build and install venom:
+After you installed the dependencies, you can use use two Venom versions:
+
+Git version: clone, build and install venom:
 
     git clone git://github.com/desiderantes/venom.git
     cd venom
     bake
     bake release-deb
-    sudo dpki -i venom.deb
-
+    sudo dpkg -i venom.deb
+	
+Tarball release:
+	tar -xfz venom-{version}.tar.gz
+	cd venom
+	./configure
+	make
+	sudo make install
+	
 OS X
 ====
 
