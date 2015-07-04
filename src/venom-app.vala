@@ -74,6 +74,11 @@ namespace Venom{
 			opts = opt;
 		}
 		protected override void startup() {
+			var action = new GLib.SimpleAction ("quit", null);
+			action.activate.connect (quit);
+			add_action (action);
+			add_accelerator ("<Ctrl>Q", "app.quit", null);
+			Gtk.Settings.get_default().gtk_application_prefer_dark_theme=true;
 			base.startup();
 		}
 		protected override void activate() {

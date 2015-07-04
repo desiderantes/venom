@@ -26,27 +26,43 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
   <!-- interface-name Venom -->
   <!-- interface-description A graphical client for Tox -->
   <!-- interface-copyright Venom authors and contributors -->
-  <object class="GtkAction" id="add_action"/>
-  <object class="GtkAction" id="filetranster_action"/>
-  <object class="GtkAction" id="groupchat_action"/>
-  <object class="GtkAction" id="preferences_action"/>
+  <object class="GtkImage" id="add_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="resource">/im/tox/venom/ui/add_button.svg</property>
+  </object>
+  <object class="GtkImage" id="filetransfer_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="resource">/im/tox/venom/ui/filetransfer_button.svg</property>
+  </object>
+  <object class="GtkImage" id="group_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="resource">/im/tox/venom/ui/group_button.svg</property>
+  </object>
+  <object class="GtkImage" id="preferences_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="resource">/im/tox/venom/ui/preferences_button.svg</property>
+  </object>
   <template class="VenomClientWindow" parent="GtkApplicationWindow">
     <property name="width_request">320</property>
     <property name="height_request">420</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes" comments="Name of the App :D">Venom</property>
-    <property name="icon">venom.png</property>
+    <property name="icon_name">venom</property>
     <property name="gravity">center</property>
     <child>
-      <object class="GtkBox" id="box1">
+      <object class="GtkBox" id="main_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkGrid" id="data_grid">
+          <object class="GtkBox" id="data_box">
             <property name="width_request">350</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="row_spacing">10</property>
+            <property name="orientation">vertical</property>
             <child>
               <object class="GtkButtonBox" id="buttonbox">
                 <property name="visible">True</property>
@@ -57,82 +73,75 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                 <property name="layout_style">center</property>
                 <child>
                   <object class="GtkButton" id="add_button">
-                    <property name="related_action">add_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="action_name">add_action</property>
+                    <property name="image">add_image</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="groupchat_button">
-                    <property name="related_action">groupchat_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="action_name">groupchat_action</property>
+                    <property name="action_name">create_groupchat</property>
+                    <property name="image">group_image</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="filetransfer_button">
-                    <property name="related_action">filetranster_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="action_name">filetransfer_action</property>
+                    <property name="action_name">show_filetransfer</property>
+                    <property name="image">filetransfer_image</property>
+                    <property name="use_underline">True</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="preferences_button">
-                    <property name="related_action">preferences_action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="action_name">preferences_action</property>
+                    <property name="action_name">preferences</property>
+                    <property name="image">preferences_image</property>
                     <property name="image_position">top</property>
                     <property name="always_show_image">True</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
               </object>
               <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSeparator" id="separator1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="pack_type">end</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -235,82 +244,61 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                 </child>
               </object>
               <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="filter_box">
+              <object class="GtkSeparator" id="separator1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="spacing">10</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="opts_box">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkComboBoxText" id="statusfilter_combobox">
+                  <object class="GtkStackSwitcher" id="view_changer">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="margin">1</property>
+                    <property name="stack">list_stack</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSearchEntry" id="contacts_searchentry">
+                  <object class="GtkStack" id="list_stack">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="primary_icon_name">edit-find-symbolic</property>
-                    <property name="primary_icon_activatable">False</property>
-                    <property name="primary_icon_sensitive">False</property>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
               </object>
               <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow" id="contactstack_container">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="vscrollbar_policy">never</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">3</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkRevealer" id="conversation_revealer">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="transition_type">none</property>
-            <property name="reveal_child">True</property>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
       </object>

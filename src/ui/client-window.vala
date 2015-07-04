@@ -32,10 +32,10 @@ namespace Venom{
 		private Gtk.ComboBox status_combobox;
 		[GtkChild]
 		private Gtk.Spinner status_spinner;
-		[GtkChild]
-		private Gtk.ComboBoxText statusfilter_combobox;
-		[GtkChild]
-		private Gtk.SearchEntry contacts_searchentry;
+		
+		private Gtk.ComboBoxText status_filter;
+		private Gtk.ComboBoxText conversation_filter;
+		private Gtk.SearchEntry contacts_search;
 
 		[GtkChild]
 		private Gtk.Button add_button;
@@ -46,23 +46,44 @@ namespace Venom{
 		[GtkChild]
 		private Gtk.Button preferences_button;
 		[GtkChild]
-		private Gtk.ScrolledWindow contactstack_container;
+		private Gtk.Box main_box;
 		[GtkChild]
-		private Gtk.Revealer conversation_revealer;
-		private Gtk.Stack conversation_stack;
-		private Gtk.StackSwitcher contact_list;
+		private Gtk.Stack list_stack;
+		[GtkChild]
+		private Gtk.StackSwitcher view_changer;
 		private Gtk.Popover userstatus_popover;
 		private Gtk.Popover add_contact_popover;
 		private Gtk.Popover preferences_popover;
+		private OwnProfile profile;
 		
 		public ClientWindow(VenomApp app){
+			
 			this.set_application(app);
-			contactstack_container.add(contact_list);
-			conversation_revealer.add(conversation_stack);
-			conversation_stack = new Gtk.Stack();
-			conversation_stack.add(new ConversationWidget());
-			contact_list = new Gtk.StackSwitcher();
-			contact_list.set_stack(conversation_stack);
+			setup_lists();
+			
+			this.profile = OwnProfile.instance;
+			
+			setup_profile();
+		}
+		
+		private void setup_lists(){
+			list_stack.add_titled(new Gtk.Box(Gtk.Orientation.VERTICAL,10),"uno", _("Contacts"));
+			list_stack.add_titled(new Gtk.Box(Gtk.Orientation.VERTICAL,10),"dos", _("Conversations"));
+			
+		}
+		
+		private void setup_profile(){
+			username_label.set_text(profile.name);
+			userstatus_button.label= profile.status;
+			avatar_image.set_from_pixbuf(profile.avatar);
+		}
+		
+		public void search_text_changed () {
+			var text = contacts_search.get_text ();
+
+			if (text == "")
+				return;
+
 		}
 		
 	}

@@ -5,6 +5,10 @@
 		<file alias="client-window.ui" preprocess="xml-stripblanks">ui/client-window.ui</file>
 		<file alias="conversation-widget.ui" preprocess="xml-stripblanks">ui/conversation-widget.ui</file>
 		<file alias="profile-box.ui"preprocess="xml-stripblanks">ui/profile-box.ui</file>
+		<file alias="add_button.svg">ui/data/add_button.svg</file>
+		<file alias="group_button.svg">ui/data/group_button.svg</file>
+		<file alias="filetransfer_button.svg">ui/data/filetransfer_button.svg</file>
+		<file alias="preferences_button.svg">ui/data/preferences_button.svg</file>
 	</gresource>
 </gresources>
 
