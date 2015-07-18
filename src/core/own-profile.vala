@@ -21,8 +21,8 @@ namespace Venom{
 		public string name{get;set;}
 		public string status{get;set;}
 		public Gdk.Pixbuf? avatar{get;set;}
-		public uint8[] pubkey;
-		//public UserStatus user_status{get;set;}
+		public uint8[] address;
+		public UserStatus user_status{get;set;}
 		
 		private static OwnProfile _instance = null;
 		public static OwnProfile instance{

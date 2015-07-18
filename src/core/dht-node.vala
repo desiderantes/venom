@@ -1,6 +1,6 @@
 /* -*- Mode: vala; tab-width: 4; intend-tabs-mode: t -*- */
-/* contact.c
- * contact.vala
+/* dht-node.c
+ * dht-node.vala
  * This file is part of Venom
  * Copyright (C) 2015 Venom authors
  * Venom is free software: you can redistribute it and/or modify it
@@ -16,29 +16,19 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using GLib;
-using ToxCore;
-
 namespace Venom{
-	public class Contact : GLib.Object{
-		public uint8 address[ToxCore.ADDRESS_SIZE]{get;private set;}
-		public string name{get;set;default = ""}
-		public uint32 friend_number{get;private set;}
-		public string status_message{get;set; default = ""}
-		public DateTime last_seen{get;set;}
-		public UserStatus user_status{get;set;default = UserStatus.NONE}
-		
-		public Gdk.Pixbuf? avatar{get;set;}
-		public string alias{get;set;default=""}
-		public bool is_typing{get;set;default=false}
-		public bool is_silenced{get;set;default=false}
-		
-		
-		public Contact(uint8 address[ToxCore.ADDRESS_SIZE], uint32 friend_number){
-			this.address = address;
-			this.friend_number = friend_number;
+	public class DHTNode : GLib.Object{
+		public uint8[ToxCore.PUBLIC_KEY_SIZE] pubkey;
+		public string? ipv4;
+		public string? ipv6;
+		public uint16 port;
+		public string owner;
+		public DHTNode(string pubkey, string? ipv4, string? ipv6, uint16 port, string owner){
+			this.host = host;
+			this.port = port;
+			this.pubkey = str2bin(pubkey);
+			this.owner = owner; 
 		}
-		
 	}
-
+ 
 }

@@ -53,11 +53,12 @@ namespace Venom{
 			}
 		}
 	}
-	
+	;
 	
 	public class VenomApp : Gtk.Application{
 		private ClientWindow window;
 		private Options opts;
+		private ToxSession tox_session;
 		public VenomApp () {
 			Object(
 				application_id: "im.tox.venom",
@@ -74,10 +75,16 @@ namespace Venom{
 			opts = opt;
 		}
 		protected override void startup() {
+			
 			var action = new GLib.SimpleAction ("quit", null);
 			action.activate.connect (quit);
 			add_action (action);
 			add_accelerator ("<Ctrl>Q", "app.quit", null);
+			action = new GLib.SimpleAction ("add-contact", null);
+			//action.activate.connect ();
+			add_action (action);
+			add_accelerator ("<Ctrl>A", "app.add-contact", null);
+			
 			Gtk.Settings.get_default().gtk_application_prefer_dark_theme=true;
 			base.startup();
 		}
@@ -94,12 +101,15 @@ namespace Venom{
 			hold();
 			window.present();
 			//FIXME allow names without tox:// prefix on command line
+			foreach(File file in files){
+				
+			}
 			release();
 		}    
 
 		public static int main (string[] args) {
 			GLib.Intl.textdomain(Config.GETTEXT_PACKAGE);
-			Environment.set_application_name(Config.GETTEXT_PACKAGE);
+			Environment.set_application_name(Config.EXEC_NAME);
 			Gtk.init(ref args);
 			//Gst.init(ref args);
 			Options opts = new Options();
@@ -108,8 +118,8 @@ namespace Venom{
 			} catch (OptionError e) {
 				stdout.printf ("error: %s\n", e.message);
 				stdout.printf (
-				               _("Run '%s --help' to see a full list of available command line options.\n"),
-				               Config.EXEC_NAME);
+					_("Run '%s --help' to see a full list of available command line options.\n"),
+					Config.EXEC_NAME);
 				return 0;
 			}
 
