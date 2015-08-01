@@ -1,6 +1,8 @@
 Venom [![Build Status](https://travis-ci.org/desiderantes/venom.png?branch=master)](https://travis-ci.org/desiderantes/venom)
 =====
 
+[![Join the chat at https://gitter.im/desiderantes/venom](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/desiderantes/venom?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A graphical user interface (using the  [GTK+ toolkit](http://gtk.org) ) for [Tox](https://github.com/irungentoo/toxcore) written in [Vala](https://wiki.gnome.org/Vala).
 
 Installing
