@@ -23,8 +23,8 @@ at the same time.
 the following log is fucking insane and full of magic
 <flo> string str = "test";
 <flo> unowned uint8[] res = (uint8[]) str;
-<flo> and then you have to correct the lenght of res
-<flo> res.length = (int) str.lenght + 1;
+<flo> and then you have to correct the length of res
+<flo> res.length = (int) str.length + 1;
 <flo> and to get a string, you just have to cast it and you can use a owned variable
 <flo> string str2 = (string) res;
 <flo> res is interpreted as a char* in C and as str2 is owned, it generates a str_dup function in background
@@ -32,7 +32,12 @@ the following log is fucking insane and full of magic
 <flo> the unowned is important.
 <flo> in case you need res as owned variable, just copy it. (uint8[] foo = res; after you corrected the size)
 */
-	
+	public string arr2str(uint8[] array){
+		uint8 name[array.length + 1];
+		Memory.copy(name, array, sizeof(uint8)* name.length);
+		name[array.length] = '\0';
+		return ((string) name).to_string();
+	}
 	[CCode (cprefix = "TOX_VERSION_")]
 	namespace Version {
 		
@@ -40,20 +45,20 @@ the following log is fucking insane and full of magic
 		 * The major version number. Incremented when the API or ABI changes in an
 		 * incompatible way.
 		 */
-		public  uint32 MAJOR;
+		public uint32 MAJOR;
 	
 		/**
 		 * The minor version number. Incremented when functionality is added without
 		 * breaking the API or ABI. Set to 0 when the major version number is
 		 * incremented.
 		 */
-		public  uint32 MINOR;
+		public uint32 MINOR;
 
 		/**
 		 * The patch or revision number. Incremented when bugfixes are applied without
 		 * changing any functionality or API or ABI.
 		 */
-		public  uint32 PATCH;
+		public uint32 PATCH;
 	
 		/**
 		 * A macro to check at preprocessing time whether the client code is compatible
@@ -1283,11 +1288,9 @@ the following log is fucking insane and full of magic
 		 */
 		private void self_get_name([CCode (array_length = false)]uint8[] name);
 		public string get_name(){
-			size_t size = self_get_name_size() + 1;
-			uint8 name[size];
+			uint8 name[self_get_name_size()];
 			self_get_name(name);
-			name[size] = '\0';
-			return ((string) name).to_string();
+			return arr2str(name);
 		}
 		
 		/**
@@ -1327,10 +1330,9 @@ the following log is fucking insane and full of magic
 		private void self_get_status_message([CCode (array_length=false)]uint8[] status_message);
 		public string get_status_message(){
 			size_t size = self_get_status_size();
-			uint8 status[size+1];
+			uint8 status[size];
 			self_get_status_message(status);
-			status[size] = '\0';
-			return ((string) status).to_string();
+			return arr2str(status);
 		}
 		
 		
@@ -1466,7 +1468,7 @@ the following log is fucking insane and full of magic
 		[CCode (cname="tox_self_get_connection_status")]
 		public ConnectionStatus get_connection_status();
 		
-		public delegate void ConnectionStatusCallback(Tox tox, ConnectionStatus status);
+		public delegate void ConnectionStatusFunc(Tox tox, ConnectionStatus status);
 		/**
 		 * Set the callback for the `self_connection_status` event. Pass null to unset.
 		 *
@@ -1479,7 +1481,7 @@ the following log is fucking insane and full of magic
 		 * TODO: how long should a client wait before bootstrapping again?
 		 */
 		[CCode (cname= "callback_connection_status")]
-		public void connection_status_callback(ConnectionStatusCallback callback);
+		public void connection_status_callback(ConnectionStatusFunc callback);
 		
 		/**
 		 * Return the time in milliseconds before iterate() should be called again
@@ -1743,17 +1745,16 @@ the following log is fucking insane and full of magic
 		public string get_friend_name(uint32 friend_number) throws FriendGetError{
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
 						
-			size_t size = friend_get_name_size(friend_number, err) + 1;
+			size_t size = friend_get_name_size(friend_number, err);
 			if (err = TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number +" is invalid" );
 			}
-			uint8 name[size+1];
+			uint8 name[size];
 			bool val = friend_get_name(name);
 			if(!val){
 				throw new FriendGetError.UNKNOWN("Unknown error on getting the name.")
 			}
-			name[size] = '\0';
-			return ((string) name).to_string();
+			return arr2str(name);
 		}
 		/**
 		 * @param friend_number The friend number of the friend whose name changed.
@@ -1799,13 +1800,12 @@ the following log is fucking insane and full of magic
 			if(err= TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number + " not found");
 			}
-			uint8 retval[size + 1];
+			uint8 retval[size];
 			bool res = friend_get_status_message(friend_number, err);
 			if(!res){
 				throw new FriendGetError.UNKNOWN("Unknown error, please check get_friend_status_message params");
 			}
-			retval[size] = '\0';
-			return ((string) retval).to_string();
+			return arr2str(retval);
 		}
 		/**
 		 * @param friend_number The friend number of the friend whose status message
@@ -1849,7 +1849,7 @@ the following log is fucking insane and full of magic
 		 * @param status The new user status.
 		 */
 		[CCode (cname="tox_friend_status_cb")]
-		public delegate void FriendStatusFunc(Tox tox, uint32 friend_number, TOX_USER_STATUS status);
+		public delegate void FriendStatusFunc(Tox tox, uint32 friend_number, UserStatusstatus);
 		
 		
 		/**

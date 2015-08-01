@@ -135,7 +135,13 @@ namespace Venom{
 		}
 		
 		public void init_callbacks(){
-		
+			handle.connection_status_callback(this.connection_status_cb);
+			handle.friend_name_callback(this.friend_name_cb);
+			handle.friend_status_callback(this.friend_status_callback);
+			handle.friend_status_message_callback(this.friend_status_message_cb);
+			handle.friend_connection_status_callback(this.friend_connection_status_cb);
+			handle.friend_typing_callback(this.friend_typing_cb);
+			handle.friend_read_receipt_callback(this.read_receipt_cb);
 		}
 		
 		/*
@@ -147,8 +153,28 @@ namespace Venom{
 		}
 	
 		public void friend_name_cb(Tox handle, uint32 friend_number, uint8[] name_array){
-			var contact = contact_map.get(friend_number);
+			contact_map.get(friend_number).name = ToxCore.arr2str(name_array);
 			
+			
+		}
+		
+		public void friend_status_cb(Tox handle, uint32 friend_number, UserStatus status){
+			contact_map.get(friend_number).user_status = status;
+		}
+		
+		public void friend_status_message_cb(Tox handle, uint32 friend_number, uint8[] message_array)
+			contact_map.get(friend_number).status_message = ToxCore.arr2str(message_array);
+		}
+		
+		public void friend_connection_status_cb(Tox handle, uint32 friend_number, ConnectionStatus status){
+			contact_map.get(friend_number).connection_status = status;
+		}
+		
+		public void friend_typing_cb(Tox handle, uint32 friend_number, bool is_typing){
+			contact_map.get(friend_number).is_typing = is_typing;
+		}
+		
+		public void read_receipt_cb(Tox handle, uint32 friend number, uint32 message_id){
 		}
 		
 	}
