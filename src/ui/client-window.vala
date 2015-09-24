@@ -18,10 +18,10 @@
  */
 namespace Venom{
 	
-	[GtkTemplate (ui = "/im/tox/venom/ui/client-window.ui")]
+	[GtkTemplate (ui = "/chat/tox/venom/ui/client-window.ui")]
 	public class ClientWindow : Gtk.ApplicationWindow{
 	
-		private Gtk.StatusIcon tray_icon;
+		
 		[GtkChild]
 		private Gtk.Image avatar_image;
 		[GtkChild]
@@ -35,6 +35,7 @@ namespace Venom{
 		
 		private Gtk.ComboBoxText status_filter;
 		private Gtk.ComboBoxText conversation_filter;
+		[GtkChild]
 		private Gtk.SearchEntry contacts_search;
 
 		[GtkChild]
@@ -44,11 +45,13 @@ namespace Venom{
 		[GtkChild]
 		private Gtk.Button filetransfer_button;
 		[GtkChild]
-		private Gtk.Button preferences_button;
+		private Gtk.MenuButton options_button;
+		[GtkChild]
+		private Gtk.MenuButton avatar_button
 		[GtkChild]
 		private Gtk.Box main_box;
 		[GtkChild]
-		private Gtk.Stack list_stack;
+		private Gtk.Stack conversation_stack;
 		[GtkChild]
 		private Gtk.StackSwitcher view_changer;
 		private Gtk.Popover userstatus_popover;
@@ -67,8 +70,7 @@ namespace Venom{
 		}
 		
 		private void setup_lists(){
-			list_stack.add_titled(new Gtk.Box(Gtk.Orientation.VERTICAL,10),"uno", _("Contacts"));
-			list_stack.add_titled(new Gtk.Box(Gtk.Orientation.VERTICAL,10),"dos", _("Conversations"));
+			
 			
 		}
 		

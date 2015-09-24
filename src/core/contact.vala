@@ -27,7 +27,7 @@ namespace Venom{
 		public string status_message{get;set; default = ""}
 		public DateTime last_seen{get;set;}
 		public UserStatus user_status{get;set;default = UserStatus.NONE}
-		
+		public ConnectionStatus connection_status{get;set;}
 		public Gdk.Pixbuf? avatar{get;set;}
 		public string alias{get;set;default=""}
 		public bool is_typing{get;set;default=false}

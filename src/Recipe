@@ -5,7 +5,7 @@ programs.venom {
 	sources =	venom-app.vala \
 				core/config.vala \
 				core/contact.vala \
-				core/data-storage
+				core/data-storage \
 				core/dht-node.vala \
 				core/helper.vala \
 				core/own-profile.vala \

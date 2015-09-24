@@ -175,6 +175,7 @@ namespace Venom{
 		}
 		
 		public void read_receipt_cb(Tox handle, uint32 friend number, uint32 message_id){
+	
 		}
 		
 	}

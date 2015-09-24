@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 
+<!-- Generated with glade 3.19.0 
 
 Copyright (C) Venom authors and contributors
 
@@ -20,16 +20,17 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
 <interface domain="venom">
-  <requires lib="gtk+" version="3.12"/>
+  <requires lib="gtk+" version="3.16"/>
   <!-- interface-license-type gplv3 -->
   <!-- interface-name Venom -->
   <!-- interface-description A graphical client for Tox -->
   <!-- interface-copyright Venom authors and contributors -->
-  <object class="GtkGrid" id="grid1">
+  <template class="VenomProfileBox" parent="GtkGrid">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
+    <property name="row_homogeneous">True</property>
     <child>
-      <object class="GtkImage" id="image1">
+      <object class="GtkImage" id="contact_avatar">
         <property name="width_request">48</property>
         <property name="height_request">48</property>
         <property name="visible">True</property>
@@ -37,9 +38,9 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
         <property name="stock">gtk-missing-image</property>
       </object>
       <packing>
-        <property name="left_attach">0</property>
+        <property name="left_attach">1</property>
         <property name="top_attach">0</property>
-        <property name="height">2</property>
+        <property name="height">3</property>
       </packing>
     </child>
     <child>
@@ -47,9 +48,11 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">#username</property>
+        <property name="justify">fill</property>
+        <property name="ellipsize">end</property>
       </object>
       <packing>
-        <property name="left_attach">1</property>
+        <property name="left_attach">2</property>
         <property name="top_attach">0</property>
       </packing>
     </child>
@@ -58,9 +61,11 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">#user-status</property>
+        <property name="ellipsize">end</property>
+        <property name="lines">2</property>
       </object>
       <packing>
-        <property name="left_attach">1</property>
+        <property name="left_attach">2</property>
         <property name="top_attach">1</property>
       </packing>
     </child>
@@ -68,13 +73,55 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
       <object class="GtkLabel" id="tox_id">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">tox_id</property>
+        <property name="label" translatable="yes">2AF3D467B9CA882AC</property>
+        <property name="justify">center</property>
+        <property name="ellipsize">end</property>
+        <attributes>
+          <attribute name="gravity" value="east"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="left_attach">3</property>
+        <property name="top_attach">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="last_seen_label">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">1 min ago</property>
+        <attributes>
+          <attribute name="weight" value="book"/>
+          <attribute name="gravity" value="east"/>
+        </attributes>
+      </object>
+      <packing>
+        <property name="left_attach">3</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkProgressBar" id="transfer_progressbar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
       </object>
       <packing>
         <property name="left_attach">2</property>
-        <property name="top_attach">0</property>
-        <property name="height">2</property>
+        <property name="top_attach">2</property>
+        <property name="width">2</property>
       </packing>
     </child>
-  </object>
+    <child>
+      <object class="GtkImage" id="status_image">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="stock">gtk-missing-image</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">0</property>
+        <property name="height">3</property>
+      </packing>
+    </child>
+  </template>
 </interface>

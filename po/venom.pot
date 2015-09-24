@@ -1,0 +1,14 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+#: venom.desktop:3
+msgid "Venom"
+msgstr ""
+
+#: venom.desktop:4
+msgid "Tox"
+msgstr ""
+
+#: venom.desktop:5
+msgid "A GTK+/Vala GUI for Tox"
+msgstr ""

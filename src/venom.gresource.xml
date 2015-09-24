@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-	<gresource prefix="/im/tox/venom/ui">
+	<gresource prefix="/chat/tox/venom/ui">
 		<file alias="about-window.ui" preprocess="xml-stripblanks">ui/about-window.ui</file>
 		<file alias="client-window.ui" preprocess="xml-stripblanks">ui/client-window.ui</file>
 		<file alias="conversation-widget.ui" preprocess="xml-stripblanks">ui/conversation-widget.ui</file>
-		<file alias="profile-box.ui"preprocess="xml-stripblanks">ui/profile-box.ui</file>
+		<file alias="profile-box.ui" preprocess="xml-stripblanks">ui/profile-box.ui</file>
+		<file alias="video-window.ui" preprocess="xml-stripblanks">ui/video-window.ui</file>
 		<file alias="add_button.svg">ui/data/add_button.svg</file>
 		<file alias="group_button.svg">ui/data/group_button.svg</file>
 		<file alias="filetransfer_button.svg">ui/data/filetransfer_button.svg</file>
