@@ -7,7 +7,6 @@
 *.xml~
 Recipe~
 Recipe.conf
-*.pot
 Venom-$(project.major).$(project.minor).$(project.patch).tar.bz2
 Venom_$(project.major).$(project.minor).$(project.patch).orig.tar.gz
 Venom_$(project.major).$(project.minor).$(project.patch)-0.debian.tar.gz

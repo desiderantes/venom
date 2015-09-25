@@ -3,7 +3,7 @@ programs.venom {
 		venom-app.vala \
 		core/config.vala \
 		core/contact.vala \
-		core/data-storage \
+		core/data-storage.vala \
 		core/dht-node.vala \
 		core/helper.vala \
 		core/own-profile.vala \
@@ -16,7 +16,7 @@ programs.venom {
 
 	libraries = libtoxcore
 
-	packages =	\
+	packages = \
 		gthread-2.0 \
 		gmodule-2.0 \
 		glib-2.0 >= 2.42.0 \

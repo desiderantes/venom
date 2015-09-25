@@ -4,12 +4,14 @@ project {
 	minor = 1
 	patch = 0
 	version = $(project.major).$(project.minor).$(project.patch)
-	minimum-bake-version = 0.1.33
+	minimum-bake-version = 0.1.49
 }
 
 data.meta { 
 	files = README \
+			README.md \
 			INSTALL \
+			INSTALL.md \
 			AUTHORS \
 			NEWS \
 
