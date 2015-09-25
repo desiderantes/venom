@@ -3,6 +3,8 @@
 *.template~
 *.vapi~
 *.ui~
+*.md~
+.gitignore~
 *.ui#
 *.xml~
 Recipe~

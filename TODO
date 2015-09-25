@@ -1,0 +1,9 @@
+EVERYTHING
+* Working connection
+* Message persistance
+* Avatar hashing and storing
+* Custom TextView for Chat
+* Custom Packet support on .vapi
+* libtoxav and libtoxdns vapi
+* Icons and Graphic Resources
+
