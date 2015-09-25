@@ -76,7 +76,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                     <property name="can_focus">False</property>
                     <property name="search_mode_enabled">True</property>
                     <child>
-                      <object class="GtkSearchEntry" id="contact_searchentry">
+                      <object class="GtkSearchEntry" id="contact_search">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="truncate_multiline">True</property>
@@ -262,7 +262,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
           </object>
         </child>
         <child>
-          <object class="GtkMenuButton" id="options">
+          <object class="GtkMenuButton" id="options_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
