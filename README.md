@@ -8,7 +8,7 @@ A graphical user interface (using the  [GTK+ toolkit](http://gtk.org) ) for [Tox
 Installing
 ----------
 
-- Grab a [stable (not currently available)](https://github.com/desiderantes/venom/releases) or [nightly(not currently available)](https://wiki.tox.im/Binaries)
+- Grab a [stable (not currently available)](https://github.com/desiderantes/venom/releases) or [nightly(not currently available)](https://wiki.tox.chat/binaries)
 
 Contributing
 ------------

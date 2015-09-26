@@ -55,6 +55,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
     <property name="can_focus">False</property>
     <property name="icon_name">venom</property>
     <property name="gravity">center</property>
+    <property name="show_menubar">False</property>
     <child>
       <object class="GtkBox" id="main_box">
         <property name="visible">True</property>
@@ -110,6 +111,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                   <object class="GtkButtonBox" id="buttonbox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
                     <property name="homogeneous">True</property>
                     <property name="layout_style">center</property>
                     <child>
@@ -202,7 +204,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
         <property name="spacing">5</property>
         <property name="show_close_button">True</property>
         <child>
-          <object class="GtkMenuButton" id="avatar-button">
+          <object class="GtkMenuButton" id="avatar_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -225,14 +227,14 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
           </object>
         </child>
         <child type="title">
-          <object class="GtkBox" id="userinfo-box">
+          <object class="GtkBox" id="userinfo_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <property name="spacing">10</property>
             <property name="homogeneous">True</property>
             <child>
-              <object class="GtkLabel" id="username-label">
+              <object class="GtkLabel" id="username_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label">#username</property>
@@ -247,7 +249,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="userstatus-button">
+              <object class="GtkButton" id="userstatus_button">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -270,8 +272,21 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
             <property name="direction">right</property>
             <property name="use_popover">False</property>
             <child>
-              <placeholder/>
+              <object class="GtkImage" id="gear_icon">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">emblem-system</property>
+              </object>
             </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="separator1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="pack_type">end</property>
@@ -285,7 +300,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
             <property name="halign">start</property>
             <property name="spacing">10</property>
             <child>
-              <object class="GtkComboBox" id="status_combobox">
+              <object class="GtkSpinner" id="status_spinner">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
               </object>
@@ -296,7 +311,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
               </packing>
             </child>
             <child>
-              <object class="GtkSpinner" id="status_spinner">
+              <object class="GtkComboBox" id="status_combobox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
               </object>
@@ -309,7 +324,7 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
           </object>
           <packing>
             <property name="pack_type">end</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
