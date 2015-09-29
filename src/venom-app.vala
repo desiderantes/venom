@@ -92,6 +92,7 @@ application_id: "chat.tox.venom",
 			hold();
 			if(window == null) {
 				window = new ClientWindow(this);
+				window.tox_session = tox_session; 
 			}
 			window.present();
 			release();
@@ -100,9 +101,9 @@ application_id: "chat.tox.venom",
 		protected override void open(GLib.File[] files, string hint) {
 			hold();
 			window.present();
-			// FIXME allow names without tox:// prefix on command line
+			
 			foreach(File file in files) {
-
+				print(file.get_path());
 			}
 			release();
 		}
@@ -110,6 +111,7 @@ application_id: "chat.tox.venom",
 		public static int main (string[] args) {
 			GLib.Intl.textdomain(Config.GETTEXT_PACKAGE);
 			Environment.set_application_name(Config.EXEC_NAME);
+			MainLoop loop = new MainLoop();
 			Gtk.init(ref args);
 			// Gst.init(ref args);
 			Options opts = new Options();
@@ -130,6 +132,7 @@ application_id: "chat.tox.venom",
 			}
 
 			var venom = new VenomApp.with_options(opts);
+			loop.run();
 			return venom.run();
 
 		}

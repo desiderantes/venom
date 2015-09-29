@@ -87,8 +87,8 @@ namespace Venom{
 				Thread.usleep(handle.iterate_interval()*1000);
 			}
 		}
-		//This method blocks!
-		public void stop(){
+		
+		public async void stop(){
 			running = false;
 			is_connected = false;
 			core_thread.join();
