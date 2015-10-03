@@ -45,44 +45,5 @@ namespace Venom{
 		retval.up();
 		return retval;		
 	}
-	
-	
-	public uint levenshtein(string needle,string haystack) {
-		var n = needle.length;
-		var m = haystack.length;	
-		var v0 = new int[needle.length];
-		var v1 = new int[haystack.length];
-		if(n == 0){
-			return m;
-		}
-		if(m == 0){
-			return n;
-		}
-		if(n == m){
-			return 0;
-		}
-		
-		for(int i = 0; i <= n; i++){
-			v0[i] = i;
-			
-		}
-		
-		int cost = 0;
-		unichar c;
-		unichar d;
-		for (int i = 0; i< n; needle.get_next_char (ref i, out c);) {
-			v1[0] = i + 1;
-			for (int j = 0; j< m - 1; haystack.get_next_char (ref j, out d);) {
-				cost = (c == d) ? 0 : 1;
-				v1[j+1] = int.min(v1[j] + 1, int.min(v0[j+1] + 1, v0[j] + cost));
-			}
-			GLib.Memory.copy(v0,v1,sizeof(int) * v1.length);
-		} 
-		return v1[m-1];
-	}
-		
-	public uint rel_distance(string needle, string haystack){
-		
-	}
 		
 }

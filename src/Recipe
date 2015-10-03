@@ -6,6 +6,7 @@ programs.venom {
 		core/data-storage.vala \
 		core/dht-node.vala \
 		core/helper.vala \
+		core/resource-helper.vala \
 		core/own-profile.vala \
 		core/tox-session.vala \
 		ui/client-window.vala \

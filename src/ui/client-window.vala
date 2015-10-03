@@ -21,7 +21,6 @@ namespace Venom{
 	[GtkTemplate (ui = "/chat/tox/venom/ui/client-window.ui")]
 	public class ClientWindow : Gtk.ApplicationWindow{
 	
-		
 		[GtkChild]
 		private Gtk.Image avatar_image;
 		[GtkChild]
@@ -47,7 +46,7 @@ namespace Venom{
 		[GtkChild]
 		private Gtk.MenuButton options_button;
 		[GtkChild]
-		private Gtk.MenuButton avatar_button
+		private Gtk.MenuButton avatar_button;
 		[GtkChild]
 		private Gtk.Box main_box;
 		[GtkChild]

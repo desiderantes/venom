@@ -16,13 +16,15 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+using GLib;
+using ToxCore;
 namespace Venom{
 	public class OwnProfile : GLib.Object{
 		public string name{get;set;}
 		public string status{get;set;}
 		public Gdk.Pixbuf? avatar{get;set;}
 		public string address;
-		public UserStatus user_status{get;set;}
+		public ToxCore.UserStatus user_status{get;set;}
 		
 		
 		private OwnProfile(){

@@ -10,12 +10,11 @@ namespace Venom {
 					lock(_instance){
 						if(_instance == null){
 							_instance = new ResourceHelper();
-							
+						}			
 					}
 				}
 				return _instance;
 			}
-			
 		}
 		
 		

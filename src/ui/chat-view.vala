@@ -12,7 +12,7 @@ namespace Venom{
 
 			Gtk.TextIter iter;
 			window_to_buffer_coords(Gtk.TextWindowType.TEXT, (int)evt.x, (int)evt.y, out bx, out by);
-			get_iter_at_location(out iter, bx, by);
+			this.get_iter_at_location(out iter, bx, by);
 			foreach (var tag in iter.get_tags()) {
 				string uri = tag.get_data("_uri");
 				if (uri != null) {

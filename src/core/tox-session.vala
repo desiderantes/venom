@@ -107,33 +107,33 @@ namespace Venom{
 		
 		public void init_contacts(){
 			lock(handle){
-			uint32[] friend_arr =handle.get_friend_list();
-			foreach (uint32 num in friend_arr){
-				try{
-					var contact = new Contact(num, handle.get_friend_public_key(num));
-					
-				}catch (FriendGetError err){
-					GLib.error(err.message);
+				uint32[] friend_arr =handle.get_friend_list();
+				foreach (uint32 num in friend_arr){
+					try{
+						var contact = new Contact(num, handle.get_friend_public_key(num));
+						
+					}catch (FriendGetError err){
+						GLib.error(err.message);
+					}
+					try{
+						contact.last_seen = new Datetime.from_unix_utc(handler.get_friend_last_online(num));
+					}catch(FriendGetError err){
+						GLib.error(err.message);
+					}
+					try{
+						contact.name = handler.get_friend_name(num);
+					}catch(FriendGetError err){
+						GLib.error(err.message);
+					}
+					try{
+						contact.status_message = handler.get_friend_status_message(num);
+					}catch(FriendGetError err){
+						GLib.error(err.message);
+					}
+					contact_map.set(num,contact);				
 				}
-				try{
-					contact.last_seen = new Datetime.from_unix_utc(handler.get_friend_last_online(num));
-				}catch(FriendGetError err){
-					GLib.error(err.message);
-				}
-				try{
-					contact.name = handler.get_friend_name(num);
-				}catch(FriendGetError err){
-					GLib.error(err.message);
-				}
-				try{
-					contact.status_message = handler.get_friend_status_message(num);
-				}catch(FriendGetError err){
-					GLib.error(err.message);
-				}
-				contact_map.set(num,contact);				
 			}
-		}
-		
+		}	
 		public void init_callbacks(){
 			handle.connection_status_callback(this.connection_status_cb);
 			handle.friend_name_callback(this.friend_name_cb);
@@ -162,7 +162,7 @@ namespace Venom{
 			contact_map.get(friend_number).user_status = status;
 		}
 		
-		public void friend_status_message_cb(Tox handle, uint32 friend_number, uint8[] message_array)
+		public void friend_status_message_cb(Tox handle, uint32 friend_number, uint8[] message_array){
 			contact_map.get(friend_number).status_message = ToxCore.arr2str(message_array);
 		}
 		
@@ -174,7 +174,7 @@ namespace Venom{
 			contact_map.get(friend_number).is_typing = is_typing;
 		}
 		
-		public void read_receipt_cb(Tox handle, uint32 friend number, uint32 message_id){
+		public void read_receipt_cb(Tox handle, uint32 friend_number, uint32 message_id){
 	
 		}
 		

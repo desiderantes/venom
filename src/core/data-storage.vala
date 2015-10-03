@@ -31,7 +31,7 @@ namespace Venom{
 
 				// Get the root node:
 				Json.Node node = parser.get_root ();
-				unowned Json.Array array = node.get_object().get_member("servers").get_object().
+				unowned Json.Array array = node.get_object().get_member("servers").get_object();
 				foreach (unowned Json.Node item in array.get_elements ()) {
 					unowned Json.Object obj = item.get_object ();
 					DHTNode server = new DHTNode (obj.get_string_member ("pubkey"), obj.get_string_member ("ipv4"), obj.get_string_member ("ipv6"), (uint16)obj.get_int_member ("port"), obj.get_string_member ("owner"));

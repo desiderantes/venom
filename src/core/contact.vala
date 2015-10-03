@@ -21,21 +21,25 @@ using ToxCore;
 
 namespace Venom{
 	public class Contact : GLib.Object{
-		public uint8 address[ToxCore.ADDRESS_SIZE]{get;private set;}
-		public string name{get;set;default = ""}
+	
+		private uint8[] _address = new uint8[ToxCore.ADDRESS_SIZE];
+		public uint8[] address{get{
+									return this._address;
+								}}
+		public string name{get;set;default = "";}
 		public uint32 friend_number{get;private set;}
-		public string status_message{get;set; default = ""}
+		public string status_message{get;set; default = "";}
 		public DateTime last_seen{get;set;}
-		public UserStatus user_status{get;set;default = UserStatus.NONE}
+		public UserStatus user_status{get;set;default = UserStatus.NONE;}
 		public ConnectionStatus connection_status{get;set;}
 		public Gdk.Pixbuf? avatar{get;set;}
-		public string alias{get;set;default=""}
-		public bool is_typing{get;set;default=false}
-		public bool is_silenced{get;set;default=false}
+		public string alias{get;set;default="";}
+		public bool is_typing{get;set;default=false;}
+		public bool is_silenced{get;set;default=false;}
 		
 		
-		public Contact(uint8 address[ToxCore.ADDRESS_SIZE], uint32 friend_number){
-			this.address = address;
+		public Contact(uint8[ToxCore.ADDRESS_SIZE] address, uint32 friend_number){
+			this._address = address;
 			this.friend_number = friend_number;
 		}
 		
