@@ -401,8 +401,8 @@ the following log is fucking insane and full of magic
 	}
 	
 	public errordomain BootstrapError{
-		BAD_DATA,
 		BAD_HOST,
+		BAD_PORT,
 	}
 		
 	public errordomain FriendAddError {
@@ -571,6 +571,20 @@ the following log is fucking insane and full of magic
 	[CCode (cname = "Tox_Options",  destroy_function = "tox_options_free", has_type_id = false)]
 	[Compact]
 	public class Options {
+	
+		private enum TOX_ERR_OPTIONS_NEW {
+		
+			/**
+			 * The function returned successfully.
+			 */
+			OK,
+				
+			/**
+			 * The function failed to allocate enough memory for the options struct.
+			 */
+			MALLOC,
+
+		}
 	
 		/**
 		 * The type of socket to create.
@@ -878,11 +892,11 @@ the following log is fucking insane and full of magic
 		 * @return A new Tox instance pointer on success or null on failure.
 		 */	
 		[CCode (cname="tox_new")]
-		public static Tox? _new(Options? options, out TOX_ERR_NEW err);
+		private static Tox? _new(Options? options, out TOX_ERR_NEW err);
 	 	
 		public static Tox? create(Options? options = null) throws ConstructError{
 			TOX_ERR_NEW err;
-			Tox? ret = tox_new(options, out err);
+			Tox? ret = _new(options, out err);
 			switch(err){
 				case TOX_ERR_NEW.NULL:
 					throw new ConstructError.UNKNOWN("A parameter was null");
@@ -972,7 +986,7 @@ the following log is fucking insane and full of magic
 		private bool _add_tcp_relay(string address, uint16 port, [CCode(array_length=false)] uint8[] public_key, out TOX_ERR_BOOTSTRAP err);
 		[CCode (cname="vala_tox_add_tcp_relay")]
 		public void add_tcp_relay(string address, uint16 port, uint8[] public_key) throws BootstrapError requires(public_key.length == PUBLIC_KEY_SIZE)  {
-			TOX_ERR_BOOTSTRAP err;
+			TOX_ERR_BOOTSTRAP err = INVALID_ENUM.INVALID_ENUM;
 			bool res = _add_tcp_relay (address, port, public_key, out err);
 			if(!res){
 				switch(err){
@@ -983,7 +997,7 @@ the following log is fucking insane and full of magic
 						throw new BootstrapError.BAD_PORT( "Port "+ port-to_string()+ " not valid or unavailable");
 						break;
 					default:
-						if(err!=null){
+						if(err < 0){
 							throw new BootstrapError.BAD_HOST("Unable to connect, please check relay parameters");
 						}
 				}	
@@ -1010,7 +1024,7 @@ the following log is fucking insane and full of magic
 		 * TODO: how long should a client wait before bootstrapping again?
 		 */
 		[CCode (cname= "callback_connection_status")]
-		public void connection_status_callback(ConnectionStatusFunc callback);
+		public void connection_status_callback(ConnectionStatusFunc? callback);
 		
 		/**
 		 * Return the time in milliseconds before iterate() should be called again
@@ -1058,8 +1072,8 @@ the following log is fucking insane and full of magic
 		public uint32 add_friend(uint8[] address, string message) throws FriendAddError
 									requires(message.data.length <= MAX_FRIEND_REQUEST_LENGTH)
 									requires(message.data.length >0)
-									requires(address.length = ADDRESS_SIZE){
-			TOX_ERR_FRIEND_ADD err;
+									requires(address.length == ADDRESS_SIZE){
+			TOX_ERR_FRIEND_ADD err = INVALID_ENUM.INVALID_ENUM;
 			uint32 num = friend_add(address, message.data, out err);
 			switch(err){
 				case TOX_ERR_FRIEND.ADD_OWN_KEY:
@@ -1077,7 +1091,7 @@ the following log is fucking insane and full of magic
 				case TOX_ERR_FRIEND.ADD_MALLOC:
 					throw new FriendAddError.NOMEM("Error allocating the friend request");
 				default:
-					if(err!= null){
+					if(err < 0){
 						throw new FriendAddError.UNKNOWN("Unknown error, please check the request parameters");
 					}
 					break;
@@ -1104,7 +1118,7 @@ the following log is fucking insane and full of magic
 		 */
 		private uint32 friend_add_norequest([CCode (array_length = false)] uint8[] public_key, out TOX_ERR_FRIEND_ADD err);
 		public uint32 add_friend_norequest( uint8[] public_key) throws FriendAddError{
-			TOX_ERR_FRIEND_ADD err;
+			TOX_ERR_FRIEND_ADD err = -1;
 			uint32 num = friend_add(public_key, out err);
 			switch(err){
 				case TOX_ERR_FRIEND_ADD.OWN_KEY:
@@ -1122,7 +1136,7 @@ the following log is fucking insane and full of magic
 				case TOX_ERR_FRIEND_ADD.MALLOC:
 					throw new FriendAddError.NOMEM("Error allocating the friend request");
 				default:
-					if(err != null){
+					if(err < 0){
 						throw new FriendAddError.UNKNOWN("Unknown error, please check the request parameters");
 					}
 					break;
@@ -1306,7 +1320,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a friend changes their name.
 		 */
 		[CCode(cname="tox_callback_friend_name")]
-		public void friend_name_callback(FriendNameFunc callback);
+		public void friend_name_callback(FriendNameFunc? callback);
 
 		/**
 		 * Return the length of the friend's status message. If the friend number is
@@ -1358,7 +1372,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a friend changes their status message.
 		 */
 		[CCode (cname="tox_callback_friend_status_message")]
-		public void friend_status_message_callback(FriendStatusMessageFunc callback);
+		public void friend_status_message_callback(FriendStatusMessageFunc? callback);
 
 		/**
 		 * Return the friend's user status (away/busy/...). If the friend number is
@@ -1391,7 +1405,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a friend changes their user status.
 		 */
 		[CCode (cname="tox_callback_friend_status")]
-		public void friend_status_callback(FriendStatusFunc callback);
+		public void friend_status_callback(FriendStatusFunc? callback);
 
 		/**
 		 * Check whether a friend is currently connected to this client.
@@ -1434,7 +1448,7 @@ the following log is fucking insane and full of magic
 		 * adding friends, their connection status is initially offline.
 		 */
 		[CCode (cname="tox_callback_friend_connection_status")]
-		public void friend_connection_status_callback(FriendConnectStatusFunc callback);
+		public void friend_connection_status_callback(FriendConnectStatusFunc? callback);
 		
 		/**
 		 * Check whether a friend is currently typing a message.
@@ -1469,7 +1483,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a friend starts or stops typing.
 		 */
 		[CCode (cname="tox_callback_friend_typing")]
-		public void friend_typing_callback(FriendTypingFunc callback);
+		public void friend_typing_callback(FriendTypingFunc? callback);
 		
 		
 		/*******************************************************************************
@@ -1556,7 +1570,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when the friend receives the message sent with
 		 * tox_friend_send_message with the corresponding message ID.
 		 */
-		public void friend_read_receipt_callback(ReadReceiptFunc callback);
+		public void friend_read_receipt_callback(ReadReceiptFunc? callback);
 
 
 		/*******************************************************************************
@@ -1585,7 +1599,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a friend request is received.
 		 */
 		[CCode (cname="tox_callback_friend_request")]
-		public void friend_request_callback(FriendRequestFunc callback);
+		public void friend_request_callback(FriendRequestFunc? callback);
 
 		/**
 		 * @param friend_number The friend number of the friend who sent the message.
@@ -1604,7 +1618,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a message from a friend is received.
 		 */
 		[CCode (cname="tox_callback_friend_message")]
-		public void friend_message_callback(FriendMessageFunc callback);
+		public void friend_message_callback(FriendMessageFunc? callback);
 
 
 		/*******************************************************************************
@@ -1708,7 +1722,7 @@ the following log is fucking insane and full of magic
 		 * friend.
 		 */
 		[CCode (cname="tox_callback_file_recv_control")]
-		public void file_recv_control_callback(FileControlReceiveFunc callback);
+		public void file_recv_control_callback(FileControlReceiveFunc? callback);
 
 
 		/**
@@ -1938,7 +1952,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when Core is ready to send more file data.
 		 */
 		[CCode (cname="tox_callback_file_chunk_request")]
-		public void chunk_request_callback(ChunkRequestFunc callback);
+		public void chunk_request_callback(ChunkRequestFunc? callback);
 
 
 		/*******************************************************************************
@@ -1977,7 +1991,7 @@ the following log is fucking insane and full of magic
 		 * This event is triggered when a file transfer request is received.
 		 */
 		[CCode (cname="tox_callback_file_recv")]
-		public void file_receive_callback(FileReceiveFunc callback);
+		public void file_receive_callback(FileReceiveFunc? callback);
 		
 		/**
 		 * When length is 0, the transfer is finished and the client should release the
@@ -2006,7 +2020,7 @@ the following log is fucking insane and full of magic
 		 * subsequently when a chunk of file data for an accepted request was received.
 		 */
 		[CCode(cname="tox_callback_file_recv_chunk")]
-		public void receive_chunk_callback(ReceiveChunkFunc callback);
+		public void receive_chunk_callback(ReceiveChunkFunc? callback);
 
 
 		/*******************************************************************************
@@ -2029,6 +2043,11 @@ the following log is fucking insane and full of magic
 	 * :: Private enums (to bind them as Error)
 	 *
 	 ******************************************************************************/
+	 
+	 private enum INVALID_ENUM{
+	 	INVALID_ENUM = -1,
+	 }
+	 
 	 /**
 	 * Common error codes for friend state query functions.
 	 */
@@ -2186,7 +2205,7 @@ the following log is fucking insane and full of magic
 		LOAD_BAD_FORMAT,
 
 	}
-	private enum TOX_ERR_BOOTSTRAP {
+	private enum TOX_ERR_BOOTSTRAP : INVALID_ENUM {
 
 		/**
 		 * The function returned successfully.
@@ -2211,19 +2230,7 @@ the following log is fucking insane and full of magic
 		
 	}
 		
-	private enum TOX_ERR_OPTIONS_NEW {
-		
-		/**
-		 * The function returned successfully.
-		 */
-		OK,
-		
-		/**
-		 * The function failed to allocate enough memory for the options struct.
-		 */
-		MALLOC,
-
-	}
+	
 	private enum TOX_ERR_FRIEND_DELETE {
 		/**
 		 * The function returned successfully.
@@ -2260,7 +2267,7 @@ the following log is fucking insane and full of magic
 		TOO_LONG
 	}
 
-	private enum TOX_ERR_FRIEND_ADD {
+	private enum TOX_ERR_FRIEND_ADD : INVALID_ENUM{
 
 		/**
 		 * The function returned successfully.
