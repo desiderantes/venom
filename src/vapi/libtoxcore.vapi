@@ -986,7 +986,7 @@ the following log is fucking insane and full of magic
 		private bool _add_tcp_relay(string address, uint16 port, [CCode(array_length=false)] uint8[] public_key, out TOX_ERR_BOOTSTRAP err);
 		[CCode (cname="vala_tox_add_tcp_relay")]
 		public void add_tcp_relay(string address, uint16 port, uint8[] public_key) throws BootstrapError requires(public_key.length == PUBLIC_KEY_SIZE)  {
-			TOX_ERR_BOOTSTRAP err = INVALID_ENUM.INVALID_ENUM;
+			TOX_ERR_BOOTSTRAP err = TOX_ERR_BOOTSTRAP.INVALID_ENUM;
 			bool res = _add_tcp_relay (address, port, public_key, out err);
 			if(!res){
 				switch(err){
@@ -996,10 +996,9 @@ the following log is fucking insane and full of magic
 					case TOX_ERR_BOOTSTRAP.BAD_PORT:
 						throw new BootstrapError.BAD_PORT( "Port "+ port-to_string()+ " not valid or unavailable");
 						break;
-					default:
-						if(err < 0){
-							throw new BootstrapError.BAD_HOST("Unable to connect, please check relay parameters");
-						}
+					case TOX_ERR_BOOTSTRAP.INVALID_ENUM:
+						throw new BootstrapError.BAD_HOST("Unable to connect, please check relay parameters");
+						break;
 				}	
 			}	
 		}
@@ -1073,7 +1072,7 @@ the following log is fucking insane and full of magic
 									requires(message.data.length <= MAX_FRIEND_REQUEST_LENGTH)
 									requires(message.data.length >0)
 									requires(address.length == ADDRESS_SIZE){
-			TOX_ERR_FRIEND_ADD err = INVALID_ENUM.INVALID_ENUM;
+			TOX_ERR_FRIEND_ADD err = TOX_ERR_FRIEND_ADD.INVALID_ENUM;
 			uint32 num = friend_add(address, message.data, out err);
 			switch(err){
 				case TOX_ERR_FRIEND.ADD_OWN_KEY:
@@ -1090,10 +1089,9 @@ the following log is fucking insane and full of magic
 					break;
 				case TOX_ERR_FRIEND.ADD_MALLOC:
 					throw new FriendAddError.NOMEM("Error allocating the friend request");
-				default:
-					if(err < 0){
-						throw new FriendAddError.UNKNOWN("Unknown error, please check the request parameters");
-					}
+					break;
+				case TOX_ERR_FRIEND_ADD.INVALID_ENUM:
+					throw new FriendAddError.UNKNOWN("Unknown error, please check the request parameters");
 					break;
 			}
 			return num;
@@ -1118,7 +1116,7 @@ the following log is fucking insane and full of magic
 		 */
 		private uint32 friend_add_norequest([CCode (array_length = false)] uint8[] public_key, out TOX_ERR_FRIEND_ADD err);
 		public uint32 add_friend_norequest( uint8[] public_key) throws FriendAddError{
-			TOX_ERR_FRIEND_ADD err = -1;
+			TOX_ERR_FRIEND_ADD err = TOX_ERR_FRIEND_ADD.INVALID_ENUM;
 			uint32 num = friend_add(public_key, out err);
 			switch(err){
 				case TOX_ERR_FRIEND_ADD.OWN_KEY:
@@ -1135,10 +1133,8 @@ the following log is fucking insane and full of magic
 					break;
 				case TOX_ERR_FRIEND_ADD.MALLOC:
 					throw new FriendAddError.NOMEM("Error allocating the friend request");
-				default:
-					if(err < 0){
-						throw new FriendAddError.UNKNOWN("Unknown error, please check the request parameters");
-					}
+				case TOX_ERR_FRIEND_ADD.INVALID_ENUM:
+					throw new FriendAddError.UNKNOWN("Unknown error, please check the request parameters");
 					break;
 			}
 			return num;
@@ -1293,11 +1289,14 @@ the following log is fucking insane and full of magic
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
 						
 			size_t size = friend_get_name_size(friend_number, out err);
-			if (err = TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
+			if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() +" is invalid" );
 			}
 			uint8 name[size];
-			bool val = friend_get_name(name);
+			bool val = friend_get_name(friend_number, name, err);
+			if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
+				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() +" is invalid" );
+			}
 			if(!val){
 				throw new FriendGetError.UNKNOWN("Unknown error on getting the name.");
 			}
@@ -1348,7 +1347,7 @@ the following log is fucking insane and full of magic
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() + " not found");
 			}
 			uint8 retval[size];
-			bool res = friend_get_status_message(friend_number, out err);
+			bool res = friend_get_status_message(friend_number,retval, out err);
 			if(!res){
 				throw new FriendGetError.UNKNOWN("Unknown error, please check get_friend_status_message params");
 			}
@@ -1385,7 +1384,7 @@ the following log is fucking insane and full of magic
 		public UserStatus get_friend_status(uint32 friend_number) throws FriendGetError{
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
 			UserStatus retval = friend_get_status(friend_number, out err);
-			if (err = TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
+			if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() + " not found" );
 			}
 			return retval;
@@ -1423,7 +1422,7 @@ the following log is fucking insane and full of magic
 		public ConnectionStatus get_friend_connection_status(uint32 friend_number) throws FriendGetError{
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
 			ConnectionStatus retval = friend_get_connection_status(friend_number, out err);
-			if (err = TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
+			if (err ==TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() + " not found" );
 			}
 			return retval;
@@ -1463,7 +1462,7 @@ the following log is fucking insane and full of magic
 		public bool friend_is_typing(uint32 friend_number) throws FriendGetError{
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
 			bool retval = friend_get_typing(friend_number, out err);
-			if(err = TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
+			if(err ==TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() + " not found");
 			}
 			return retval;
@@ -1766,7 +1765,7 @@ the following log is fucking insane and full of magic
 		private bool file_get_file_id(uint32 friend_number, uint32 file_number, [CCode (array_length = false)]uint8[] file_id, out TOX_ERR_FILE_GET err);
 		public uint8[] get_file_id(uint32 friend_number, uint32 file_number) throws FileGetError{
 			TOX_ERR_FILE_GET err;
-			uint8 retval[FILE_ID_LENGTH];
+			uint8[] retval = new uint8[FILE_ID_LENGTH];
 			bool res = file_get_file_id(friend_number, file_number, retval, out err);
 			if(!res){
 				switch(err){
@@ -2043,10 +2042,7 @@ the following log is fucking insane and full of magic
 	 * :: Private enums (to bind them as Error)
 	 *
 	 ******************************************************************************/
-	 
-	 private enum INVALID_ENUM{
-	 	INVALID_ENUM = -1,
-	 }
+	
 	 
 	 /**
 	 * Common error codes for friend state query functions.
@@ -2205,8 +2201,9 @@ the following log is fucking insane and full of magic
 		LOAD_BAD_FORMAT,
 
 	}
-	private enum TOX_ERR_BOOTSTRAP : INVALID_ENUM {
+	private enum TOX_ERR_BOOTSTRAP{
 
+		INVALID_ENUM = -1,
 		/**
 		 * The function returned successfully.
 		 */
@@ -2267,8 +2264,9 @@ the following log is fucking insane and full of magic
 		TOO_LONG
 	}
 
-	private enum TOX_ERR_FRIEND_ADD : INVALID_ENUM{
+	private enum TOX_ERR_FRIEND_ADD{
 
+		INVALID_ENUM = -1,
 		/**
 		 * The function returned successfully.
 		 */

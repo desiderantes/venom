@@ -38,11 +38,11 @@ namespace Venom{
 		private Gtk.SearchEntry contacts_search;
 
 		[GtkChild]
-		private Gtk.Button add_button;
+		private Gtk.ToolButton add_button;
 		[GtkChild]
-		private Gtk.Button groupchat_button;
+		private Gtk.ToolButton groupchat_button;
 		[GtkChild]
-		private Gtk.Button filetransfer_button;
+		private Gtk.ToolButton filetransfer_button;
 		[GtkChild]
 		private Gtk.MenuButton options_button;
 		[GtkChild]
@@ -57,6 +57,7 @@ namespace Venom{
 		private Gtk.Popover add_contact_popover;
 		private Gtk.Popover preferences_popover;
 		private OwnProfile profile;
+		public unowned ToxSession tox_session;
 		
 		public ClientWindow(VenomApp app){
 			
