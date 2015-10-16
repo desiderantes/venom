@@ -407,12 +407,12 @@ the following log is fucking insane and full of magic
 		
 	public errordomain FriendAddError {
 		TOOLONG,
-		NOMESSAGE,
-		OWNKEY,
-		ALREADYSENT,
+		NO_MESSAGE,
+		OWN_KEY,
+		ALREADY_SENT,
 		UNKNOWN,
-		BADCHECKSUM,
-		SETNEWNOSPAM,
+		BAD_CHECKSUM,
+		SET_NEW_NOSPAM,
 		NOMEM,
 	}		
 	
@@ -994,7 +994,7 @@ the following log is fucking insane and full of magic
 						throw new BootstrapError.BAD_HOST("Relay Host " + address.to_string()+ " is invalid");
 						break;
 					case TOX_ERR_BOOTSTRAP.BAD_PORT:
-						throw new BootstrapError.BAD_PORT( "Port "+ port-to_string()+ " not valid or unavailable");
+						throw new BootstrapError.BAD_PORT( "Port "+ port.to_string()+ " not valid or unavailable");
 						break;
 					case TOX_ERR_BOOTSTRAP.INVALID_ENUM:
 						throw new BootstrapError.BAD_HOST("Unable to connect, please check relay parameters");
@@ -1075,19 +1075,19 @@ the following log is fucking insane and full of magic
 			TOX_ERR_FRIEND_ADD err = TOX_ERR_FRIEND_ADD.INVALID_ENUM;
 			uint32 num = friend_add(address, message.data, out err);
 			switch(err){
-				case TOX_ERR_FRIEND.ADD_OWN_KEY:
+				case TOX_ERR_FRIEND_ADD.OWN_KEY:
 					throw new FriendAddError.OWN_KEY("The provided key is the same client key");
 					break;
-				case TOX_ERR_FRIEND.ADD_ALREADY_SENT:
+				case TOX_ERR_FRIEND_ADD.ALREADY_SENT:
 					throw new FriendAddError.ALREADY_SENT("The provided key belongs to an already addede friend");
 					break;
-				case TOX_ERR_FRIEND.ADD_BAD_CHECKSUM:
+				case TOX_ERR_FRIEND_ADD.BAD_CHECKSUM:
 					throw new FriendAddError.BAD_CHECKSUM("Checksum was invalid");
 					break;
-				case TOX_ERR_FRIEND.ADD_SET_NEW_NOSPAM:
+				case TOX_ERR_FRIEND_ADD.SET_NEW_NOSPAM:
 					throw new FriendAddError.SET_NEW_NOSPAM("Client was already added, changed the nospam value");
 					break;
-				case TOX_ERR_FRIEND.ADD_MALLOC:
+				case TOX_ERR_FRIEND_ADD.MALLOC:
 					throw new FriendAddError.NOMEM("Error allocating the friend request");
 					break;
 				case TOX_ERR_FRIEND_ADD.INVALID_ENUM:
@@ -1117,7 +1117,7 @@ the following log is fucking insane and full of magic
 		private uint32 friend_add_norequest([CCode (array_length = false)] uint8[] public_key, out TOX_ERR_FRIEND_ADD err);
 		public uint32 add_friend_norequest( uint8[] public_key) throws FriendAddError{
 			TOX_ERR_FRIEND_ADD err = TOX_ERR_FRIEND_ADD.INVALID_ENUM;
-			uint32 num = friend_add(public_key, out err);
+			uint32 num = friend_add_norequest(public_key, out err);
 			switch(err){
 				case TOX_ERR_FRIEND_ADD.OWN_KEY:
 					throw new FriendAddError.OWN_KEY("The provided key is the same client key");
@@ -1209,8 +1209,9 @@ the following log is fucking insane and full of magic
 		 */
 		private void self_get_friend_list([CCode (array_length = false)] uint32[] friend_list);
 		
+		[CCode (cname="vala_tox_get_friend_list")]
 		public uint32[] get_friend_list(){
-			uint32 retval[self_get_friend_list_size()];
+			uint32[] retval = new uint32[self_get_friend_list_size()];
 			self_get_friend_list(retval);
 			return retval;
 		}
@@ -1228,7 +1229,7 @@ the following log is fucking insane and full of magic
 		
 		public uint8[] get_friend_public_key(uint32 friend_number) throws FriendGetError{
 			int err;
-			uint8 retval[PUBLIC_KEY_SIZE];
+			uint8[] retval = new uint8[PUBLIC_KEY_SIZE];
 			bool ret = friend_get_public_key(friend_number, retval, out err);
 			if(!ret){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() + " is not valid");
@@ -1245,8 +1246,8 @@ the following log is fucking insane and full of magic
 		 */
 		private uint64 friend_get_last_online(uint32 friend_number, out TOX_ERR_FRIEND_DELETE error);
 		public uint64 get_friend_last_online(uint32 friend_number) throws FriendGetError{
-			TOX_ERR_FRIEND_DELETE val;
-			uint64 retval = friend_get_last_online(friend_number, val);
+			TOX_ERR_FRIEND_DELETE err;
+			uint64 retval = friend_get_last_online(friend_number, out err);
 			if(retval == uint64.MAX){
 				throw new FriendGetError.NOT_FOUND("Unable to get the last seen time (probably friend number " + friend_number.to_string() +" invalid)");
 			}
@@ -1292,8 +1293,8 @@ the following log is fucking insane and full of magic
 			if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() +" is invalid" );
 			}
-			uint8 name[size];
-			bool val = friend_get_name(friend_number, name, err);
+			uint8[] name = new uint8[size];
+			bool val = friend_get_name(friend_number, name, out err);
 			if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() +" is invalid" );
 			}
@@ -1343,10 +1344,10 @@ the following log is fucking insane and full of magic
 		public string get_friend_status_message(uint32 friend_number) throws FriendGetError{
 			TOX_ERR_FRIEND_BY_PUBLIC_KEY err;
 			size_t size = friend_get_status_message_size(friend_number, out err);
-			if(err= TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
+			if(err== TOX_ERR_FRIEND_BY_PUBLIC_KEY.NOT_FOUND){
 				throw new FriendGetError.NOT_FOUND("Friend number " + friend_number.to_string() + " not found");
 			}
-			uint8 retval[size];
+			uint8[] retval = new uint8[size];
 			bool res = friend_get_status_message(friend_number,retval, out err);
 			if(!res){
 				throw new FriendGetError.UNKNOWN("Unknown error, please check get_friend_status_message params");
@@ -1538,7 +1539,7 @@ the following log is fucking insane and full of magic
 											requires(message.length >0)
 											requires(message.data.length < MAX_MESSAGE_LENGTH){
 			TOX_ERR_FRIEND_SEND_MESSAGE err;
-			uint32 retval = friend_send_message(friend_number,type, message.data, err);	
+			uint32 retval = friend_send_message(friend_number,type, message.data, out err);	
 			switch(err){
 				case TOX_ERR_FRIEND_SEND_MESSAGE.FRIEND_NOT_FOUND:
 					throw new SendMessageError.FRIEND_NOT_FOUND("Friend number "+ friend_number.to_string()+ " not found");
@@ -1848,7 +1849,7 @@ the following log is fucking insane and full of magic
 		 *   should not be relied on.
 		 */
 		private uint32 file_send(uint32 friend_number, FileKind kind, uint64 file_size, [CCode (array_length=false)] uint8[]? file_id,  uint8[] filename_missing_null, out TOX_ERR_FILE_SEND err);
-		public uint32 send_file(uint32 friend_number, FileKind kind, uint64 file_size, uint8? file_id[FILE_ID_LENGTH], string filename) throws FileSendError requires (filename.data.length <= MAX_FILENAME_LENGTH) {
+		public uint32 send_file(uint32 friend_number, FileKind kind, uint64 file_size, uint8[]? file_id, string filename) throws FileSendError requires (filename.data.length <= MAX_FILENAME_LENGTH) requires (file_id.length == FILE_ID_LENGTH) {
 			TOX_ERR_FILE_SEND err;
 			uint32 res = file_send(friend_number, kind, file_size, file_id, filename.data, out err);
 			if(res==uint32.MAX){
@@ -2292,7 +2293,7 @@ the following log is fucking insane and full of magic
 		/**
 		 * The friend address belongs to the sending client.
 		 */
-		ADD_OWN_KEY,
+		OWN_KEY,
 
 		/**
 		 * A friend request has already been sent, or the address belongs to a friend
