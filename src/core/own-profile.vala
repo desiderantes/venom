@@ -25,9 +25,9 @@ namespace Venom{
 		public Gdk.Pixbuf? avatar{get;set;}
 		public string address;
 		public ToxCore.UserStatus user_status{get;set;}
+		public ToxCore.ConnectionStatus connection_status{get;set;}
 		
-		
-		private OwnProfile(){
+		public OwnProfile(){
 			this.name="Doodaloo";
 			this.status="Forking you big repo with my dongle";
 			try{

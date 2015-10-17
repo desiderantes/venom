@@ -38,7 +38,7 @@ namespace Venom{
 		public bool is_silenced{get;set;default=false;}
 		
 		
-		public Contact(uint8[] address, uint32 friend_number) requires (address.length == ToxCore.ADDRESS_SIZE){
+		public Contact(uint32 friend_number, uint8[] address) requires (address.length == ToxCore.ADDRESS_SIZE){
 			this._address = address;
 			this.friend_number = friend_number;
 		}

@@ -38,7 +38,7 @@ namespace Venom{
 		var sb = new StringBuilder();
 		
 		foreach( uint8 data in address){
-			var str = "".printf("%02x", data);
+			string str = "%02x".printf(data);
 			sb.append(str);
 		}
 		var retval = (string) sb.data;

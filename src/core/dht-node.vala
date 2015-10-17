@@ -18,16 +18,19 @@
  */
 namespace Venom{
 	public class DHTNode : GLib.Object{
-		public uint8[ToxCore.PUBLIC_KEY_SIZE] pubkey;
+		public uint8 pubkey[ToxCore.PUBLIC_KEY_SIZE];
 		public string? ipv4;
 		public string? ipv6;
+		public string? host;
 		public uint16 port;
 		public string owner;
-		public DHTNode(string pubkey, string? ipv4, string? ipv6, uint16 port, string owner){
+		public DHTNode(string pubkey, string? ipv4, string? ipv6, uint16 port, string owner, string? host){
 			this.host = host;
 			this.port = port;
 			this.pubkey = str2bin(pubkey);
 			this.owner = owner; 
+			this.ipv4 = ipv4;
+			this.ipv6 = ipv6;
 		}
 	}
  
