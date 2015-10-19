@@ -32,7 +32,7 @@ namespace Venom{
 			0xFC,0x11,0xA6,0x24,0xEE,0xF1,0xF3,0x52,0x7D,0x36,0x7D,0xC0,0xAC,0xD1,0x0A,
 			0xC8,0x32,0x9C,0x99,0x31,0x95,0x13};
 		private static uint16 default_dht_port = 33445;
-		private Thread<void> core_thread;
+		private GLib.Cancellable cancellable;
 		private Gee.HashMap<uint32, Contact> contact_map;
 		private DHTNode[] servers;
 		public OwnProfile own_profile;
@@ -53,6 +53,14 @@ namespace Venom{
 				GLib.error(err.message);
 			}
 			assert(handle!=null);
+<<<<<<< HEAD
+			cancellable = new GLib.Cancellable();
+			cancellable.connect(()=>{
+				running = false;
+				is_connected = false;
+			});
+=======
+>>>>>>> dd9aabc19ec8376e233cff9894a0eac3905335ed
 			init_profile();
 			init_contacts();
 			init_callbacks();
@@ -73,28 +81,20 @@ namespace Venom{
 			}
 		}
 		
-		public void start(){
-			if(!running){
-				running = true;
-				is_connected = true;
-				core_thread = new GLib.Thread<void>("tox-bg-thread",this.run);
-			}
-		}
-		
-		private void run(){
+		public async void run(){
 			running = true;
-			while(running){
+			is_connected = true;
+			while(!cancellable.is_cancelled()){
 				lock(handle) {
 					handle.iterate();
 				}
 				Thread.usleep(handle.iteration_interval()*1000);
 			}
+			yield;
 		}
 		
-		public async void stop(){
-			running = false;
-			is_connected = false;
-			core_thread.join();
+		public void stop(){
+			cancellable.cancel();
 		}
 		
 		public void init_profile(){
