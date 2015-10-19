@@ -34,7 +34,7 @@ namespace Venom{
 		private static uint16 default_dht_port = 33445;
 		private GLib.Cancellable cancellable;
 		private Gee.HashMap<uint32, Contact> contact_map;
-		private DHTNode[] servers;
+		private Gee.ArrayList<DHTNode>servers;
 		public OwnProfile own_profile;
 		public ToxSession( Gee.HashMap<uint32, Contact> contact_map, uint8[]? savedata = null, bool encrypted = false){
 			try{
@@ -53,14 +53,11 @@ namespace Venom{
 				GLib.error(err.message);
 			}
 			assert(handle!=null);
-<<<<<<< HEAD
 			cancellable = new GLib.Cancellable();
 			cancellable.connect(()=>{
 				running = false;
 				is_connected = false;
 			});
-=======
->>>>>>> dd9aabc19ec8376e233cff9894a0eac3905335ed
 			init_profile();
 			init_contacts();
 			init_callbacks();
@@ -90,7 +87,7 @@ namespace Venom{
 				}
 				Thread.usleep(handle.iteration_interval()*1000);
 			}
-			yield;
+			yield ;
 		}
 		
 		public void stop(){
