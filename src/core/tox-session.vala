@@ -16,19 +16,19 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using ToxCore;
+using Tox;
 using GLib;
 using Gee;
 
 namespace Venom{
 	public class ToxSession : GLib.Object{
 	
-		private ToxCore.Tox? handle;
-		private ToxCore.Options? options;
+		private Tox.Core? handle;
+		private Tox.Options? options;
 		private bool running = false;
 		private bool is_connected = false;
 		private static string default_dht_host = "urotukok.net";
-		private static uint8 default_dht_pubkey[ToxCore.PUBLIC_KEY_SIZE] = {0x00,0x95,
+		private static uint8 default_dht_pubkey[Tox.PUBLIC_KEY_SIZE] = {0x00,0x95,
 			0xFC,0x11,0xA6,0x24,0xEE,0xF1,0xF3,0x52,0x7D,0x36,0x7D,0xC0,0xAC,0xD1,0x0A,
 			0xC8,0x32,0x9C,0x99,0x31,0x95,0x13};
 		private static uint16 default_dht_port = 33445;
@@ -38,7 +38,7 @@ namespace Venom{
 		public OwnProfile own_profile;
 		public ToxSession( Gee.HashMap<uint32, Contact> contact_map, uint8[]? savedata = null, bool encrypted = false){
 			try{
-				options = ToxCore.Options.create();
+				options = Tox.Options.create();
 			}catch (ToxCore.OptionError err){
 				GLib.error(err.message);
 			}
@@ -48,7 +48,7 @@ namespace Venom{
 			options.savedata_data = savedata;
 			options.savedata_type= savedata==null ? SavedataType.NONE : ( encrypted? SavedataType.SECRET_KEY : SavedataType.TOX_SAVE);
 			try{
-				handle = Tox.create(options);	
+				handle = new Tox.Core(options);	
 			} catch(ConstructError err){
 				GLib.error(err.message);
 			}
@@ -106,7 +106,7 @@ namespace Venom{
 		
 		public void init_contacts(){
 			lock(handle){
-				uint32[] friend_arr =handle.get_friend_list();
+				uint32[] friend_arr = handle.get_friend_list();
 				foreach (uint32 num in friend_arr){
 					Contact contact;
 					try{
@@ -135,13 +135,13 @@ namespace Venom{
 			}
 		}	
 		public void init_callbacks(){
-			handle.connection_status_callback(this.connection_status_cb);
-			handle.friend_name_callback(this.friend_name_cb);
-			handle.friend_status_callback(this.friend_status_cb);
-			handle.friend_status_message_callback(this.friend_status_message_cb);
-			handle.friend_connection_status_callback(this.friend_connection_status_cb);
-			handle.friend_typing_callback(this.friend_typing_cb);
-			handle.friend_read_receipt_callback(this.read_receipt_cb);
+			handle.notify["connection_status"].connect(this.connection_status_cb);
+			handle.friend_name_changed.connect(this.friend_name_cb);
+			handle.friend_status_changed.connect(this.friend_status_cb);
+			handle.friend_status_message_changed.connect(this.friend_status_message_cb);
+			handle.friend_connection_status_changed.connect(this.friend_connection_status_cb);
+			handle.friend_typing_changed.connect(this.friend_typing_cb);
+			handle.friend_read_receipt.connect(this.read_receipt_cb);
 		}
 		
 		/*
@@ -152,8 +152,8 @@ namespace Venom{
 			this.own_profile.connection_status = connection_status;
 		}
 	
-		public void friend_name_cb(Tox handle, uint32 friend_number, uint8[] name_array){
-			contact_map.get(friend_number).name = ToxCore.arr2str(name_array);
+		public void friend_name_cb(Tox handle, uint32 friend_number, string name){
+			contact_map.get(friend_number).name = name;
 			
 			
 		}
@@ -162,8 +162,8 @@ namespace Venom{
 			contact_map.get(friend_number).user_status = status;
 		}
 		
-		public void friend_status_message_cb(Tox handle, uint32 friend_number, uint8[] message_array){
-			contact_map.get(friend_number).status_message = ToxCore.arr2str(message_array);
+		public void friend_status_message_cb(Tox handle, uint32 friend_number, message){
+			contact_map.get(friend_number).status_message = message;
 		}
 		
 		public void friend_connection_status_cb(Tox handle, uint32 friend_number, ConnectionStatus status){

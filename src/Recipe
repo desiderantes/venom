@@ -15,14 +15,12 @@ programs.venom {
 
 	glib-resources = venom.gresource.xml
 
-	libraries = libtoxcore
-
 	packages = \
 		gthread-2.0 \
 		gmodule-2.0 \
 		glib-2.0 >= 2.42.0 \
 		gio-2.0 >= 2.42.0 \
-		gtk+-3.0 >= 3.12.0 \
+		gtk+-3.0 >= 3.16.0 \
 		gee-0.8 >= 0.8.0 \
 		json-glib-1.0 \
 		libtoxcore
