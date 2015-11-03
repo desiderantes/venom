@@ -18,10 +18,7 @@
  */
 namespace Venom{
 	public class DataStorage : GLib.Object{
-		public static void load_convarsations(){
-		
-		}
-		
+	
 		public static Gee.ArrayList<DHTNode> get_servers(){
 			Gee.ArrayList<DHTNode> servers = new Gee.ArrayList<DHTNode>();
 			Json.Parser parser = new Json.Parser ();
