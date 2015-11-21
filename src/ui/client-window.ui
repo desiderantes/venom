@@ -84,8 +84,8 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
                         <property name="primary_icon_name">edit-find-symbolic</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="primary_icon_sensitive">False</property>
-                        <property name="placeholder_text" translatable="yes">Search Contacts...</property>
-                        <property name="input_purpose">name</property>
+                        <property name="placeholder_text" translatable="yes">Search Contacts or Groups...</property>
+                        <property name="input_purpose">pin</property>
                         <property name="input_hints">GTK_INPUT_HINT_WORD_COMPLETION | GTK_INPUT_HINT_NONE</property>
                       </object>
                     </child>
@@ -258,27 +258,6 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
           </object>
         </child>
         <child>
-          <object class="GtkMenuButton" id="options_button">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="popup">options_menu</property>
-            <property name="direction">right</property>
-            <property name="use_popover">False</property>
-            <child>
-              <object class="GtkImage" id="gear_icon">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">emblem-system</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkSeparator" id="separator1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -320,6 +299,27 @@ along with Venom.  If not, see <http://www.gnu.org/licenses/>.
           <packing>
             <property name="pack_type">end</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="options_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="popup">options_menu</property>
+            <property name="direction">right</property>
+            <property name="use_popover">False</property>
+            <child>
+              <object class="GtkImage" id="gear_icon">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">emblem-system</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

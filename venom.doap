@@ -1,0 +1,24 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:gnome="http://api.gnome.org/doap-extensions#"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name xml:lang="en">venom</name>
+  <shortdesc xml:lang="en">A Gtk+ Tox client, written in Vala</shortdesc>
+  <description>Tox is a hassle-free IM protocol. The goal of Tox is to create a configuration-free P2P Skype replacement. “Configuration-free” means that the user will simply have to open the program and will be capable of adding people and communicating with them without having to set up an account. There are many so-called Skype replacements, but all of them are either hard to configure for the normal user or suffer from being way too centralized.</description>
+  <homepage rdf:resource="https://github.com/desiderantes/venom" />
+  <mailing-list rdf:resource="https://github.com/desiderantes/venom" />
+  <download-page rdf:resource="https://github.com/desiderantes/venom" />
+  <bug-database rdf:resource="https://github.com/desiderantes/venom/issues" />
+  <category rdf:resource="http://api.gnome.org/doap-extensions#desktop" />
+  <programming-language>Vala</programming-language>
+  <programming-language>C</programming-language>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Mario Daniel Ruiz Saavedra</foaf:name>
+      <gnome:userid>desiderantes</gnome:userid>
+    </foaf:Person>
+  </maintainer>
+</Project>
